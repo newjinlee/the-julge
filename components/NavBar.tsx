@@ -18,8 +18,13 @@ export function NavBar() {
         </div>
 
         <div className="flex justify-between gap-5 text-[16px]">
-          <h1>로그인</h1>
-          <h1>회원가입</h1>
+          <Link href="/login">
+            <h1>로그인</h1>
+          </Link>
+
+          <Link href="/signup">
+            <h1>회원가입</h1>
+          </Link>
         </div>
       </div>
     </div>
