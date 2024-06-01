@@ -11,10 +11,10 @@ export function NavBar() {
           <Link className="flex items-center gap-4" href="/">
             <Image src={'/logo.png'} height={100} width={100} alt="logo"></Image>
           </Link>
-          <input
-            type="text"
-            placeholder="가게 이름으로 찾아보세요."
-            className="bg-gray-200 w-[450px] h-[40px] rounded-lg px-5 text-[14px]"></input>
+          <div className="flex items-center gap-[10px] bg-gray-200 w-[450px] h-[40px] rounded-lg px-3 text-[14px]">
+            <Image src={'/search-icon.png'} height={20} width={20} alt="search icon"></Image>
+            <input type="text" placeholder="가게 이름으로 찾아보세요." className="bg-gray-200 w-full"></input>
+          </div>
         </div>
 
         <div className="flex justify-between gap-5 text-[16px]">
