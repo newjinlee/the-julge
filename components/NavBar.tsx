@@ -21,7 +21,6 @@ export function NavBar() {
           <h1>로그인</h1>
           <h1>회원가입</h1>
         </div>
-        <h1></h1>
       </div>
     </div>
   );
