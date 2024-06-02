@@ -4,11 +4,11 @@ import Image from 'next/image';
 const JobDetail = () => {
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
-      <div className="w-full px-10 py-8 flex flex-col items-start gap-8">
-        <div className="w-full bg-white p-6 rounded-xl shadow-md">
+      <div className="w-full flex flex-col items-start gap-8">
+        <div className="w-full">
           <h2 className="text-orange-600 text-base font-bold">한식</h2>
           <h1 className="text-gray-900 text-2xl font-bold mb-6">진주회관</h1>
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
             <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
               <Image
                 className="w-full h-full object-cover"
