@@ -3,13 +3,21 @@ import React from 'react';
 import JobDetail from './JobDetail';
 import RecentJobs from './RecentJobs';
 
-const Page = () => {
+const JobPage = () => {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
+      <Body />
+    </div>
+  );
+};
+
+const Body = () => {
+  return (
+    <div className="flex-grow bg-neutral-50">
       <JobDetail />
       <RecentJobs />
     </div>
   );
 };
 
-export default Page;
+export default JobPage;
