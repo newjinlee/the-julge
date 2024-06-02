@@ -36,7 +36,7 @@ const RecentJobs = () => {
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline w-fit mx-auto py-[60px] pb-[120px]">
       <div className="max-w-[964px] mx-auto">
         <h2 className="text-2xl font-bold mb-6">최근에 본 공고</h2>
-        <div className="flex flex-wrap gap-8">
+        <div className="flex flex-wrap gap-3.5">
           {recentJobsData.map((job, index) => (
             <JobCard
               key={index}
