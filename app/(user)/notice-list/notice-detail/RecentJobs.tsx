@@ -1,5 +1,5 @@
 import React from 'react';
-import { JobCard } from '../../../../components/JobCard';
+import { JobCard } from '@/components/JobCard';
 
 const RecentJobs = () => {
   const recentJobsData = [
