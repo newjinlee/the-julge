@@ -1,6 +1,6 @@
-import type { Config } from "tailwindcss";
+import tailwindConfig from 'tailwindcss';
 
-const config: Config = {
+const config: tailwindConfig.Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,8 +13,12 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        spoqa: ['Spoqa Han Sans Neo', 'sans-serif'],
+      },
     },
   },
   plugins: [],
 };
+
 export default config;
