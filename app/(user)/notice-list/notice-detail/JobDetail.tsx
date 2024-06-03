@@ -25,20 +25,20 @@ const JobDetail = () => {
                   <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
                     <span>기존 시급보다 200%</span>
                     <div className="w-5 h-5 relative">
-                      <Image src="/arrow-up-icon.png" alt="arrow upper" layout="fill" objectFit="contain" />
+                      <Image src="/arrow-up-icon.png" alt="arrow upper" fill style={{ objectFit: 'cover' }} />
                     </div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-4 mt-4">
                 <div className="w-5 h-5 relative">
-                  <Image src="/clock-icon.png" alt="clock" layout="fill" objectFit="contain" />
+                  <Image src="/clock-icon.png" alt="clock" fill style={{ objectFit: 'cover' }} />
                 </div>
                 <p className="text-gray-600">2023-07-07 18:00~20:00 (2시간)</p>
               </div>
               <div className="flex items-center gap-4 mt-2">
                 <div className="w-5 h-5 relative">
-                  <Image src="/location-icon.png" alt="location" layout="fill" objectFit="contain" />
+                  <Image src="/location-icon.png" alt="location" fill style={{ objectFit: 'cover' }} />
                 </div>
                 <p className="text-gray-600">서울시 중구</p>
               </div>
