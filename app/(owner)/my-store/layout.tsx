@@ -1,4 +1,9 @@
 import { NavBar } from "@/components/NavBar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "내 가게: The Julge",
+};
 
 type LayoutProps = {
   children: React.ReactNode;
