@@ -15,11 +15,13 @@ type JobCardProps = {
 
 export function JobCard({ id, image, title, time, location, wage, alarm = false, percentage }: JobCardProps) {
   const router = useRouter();
+  
   const handleClick = () => {
     const job = { id, image, title, time, location, wage, alarm, percentage };
     saveRecentJob(job);
     router.push(`/notice-detail/${id}`);
   };
+  
   return (
     <div onClick={handleClick} className="flex w-[312px] h-[349px] rounded-md shadow-lg flex-col p-[16px] border-solid border-2 border-gray-200 justify-between">
       <Image src={image} height={160} width={280} alt="logo"></Image>
