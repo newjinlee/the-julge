@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import close_icon from '@/public/close-icon.png';
+import closeIcon from '@/public/close-icon.png';
 import CustomInput from './CustomInput';
+import CustomTextarea from './CustomTextarea';
 import Select from './Select';
 
 export default function StoreInfoForm() {
-  //드롭다운 옵션
   const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
   const addresses = ['서울시 종로구', '서울시 중구'];
 
@@ -14,7 +14,7 @@ export default function StoreInfoForm() {
         <div className="flex items-center justify-between mb-7">
           <h1 className="font-bold text-2xl">가게 정보</h1>
           <button>
-            <Image src={close_icon} alt="닫기 버튼" className="w-8 h-8" />
+            <Image src={closeIcon} alt="닫기 버튼" className="w-8 h-8" />
           </button>
         </div>
         <div>
@@ -23,7 +23,7 @@ export default function StoreInfoForm() {
           <Select label="주소*" options={addresses} />
           <CustomInput label="상세주소*" placeholder="입력" />
           <CustomInput label="기본 시급*" placeholder="입력" />
-          <CustomInput label="가게 설명*" type="textarea" placeholder="입력" />
+          <CustomTextarea label="가게 설명*" placeholder="입력" />
         </div>
       </div>
     </div>
