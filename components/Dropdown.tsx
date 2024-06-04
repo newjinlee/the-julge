@@ -5,17 +5,17 @@ import UpArrow from '@/public/dropdown-up.png';
 import DownArrow from '@/public/dropdown-down.png';
 import { useState } from 'react';
 
-interface SelectProps {
+interface DropdownProps {
   label: string;
   options: string[];
 }
 
-export default function Select({ label, options }: SelectProps) {
+export default function Dropdown({ label, options }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+    setIsOpen(isOpen => !isOpen);
   };
 
   const handleOptionClick = (option: string) => {
@@ -42,7 +42,7 @@ export default function Select({ label, options }: SelectProps) {
         <ul className="shadow-md">
           {options.map(option => (
             <li key={option} className="py-3 bg-white hover:bg-gray-100 border-b-2 text-center">
-              <button className="w-full" onClick={() => handleOptionClick(option)}>
+              <button className="w-full" type="button" onClick={() => handleOptionClick(option)}>
                 {option}
               </button>
             </li>
