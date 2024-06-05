@@ -1,12 +1,21 @@
+'use client';
+import { useState } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
 import CustomInput from './CustomInput';
 import CustomTextarea from './CustomTextarea';
 import Dropdown from './Dropdown';
+import ImageUpload from './ImageUpload';
 
 export default function StoreInfoForm() {
   const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
   const addresses = ['서울시 종로구', '서울시 중구'];
+
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (file: any) => {
+    setFile(file);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -29,7 +38,9 @@ export default function StoreInfoForm() {
           <div className="grid grid-cols-2 gap-4">
             <CustomInput label="기본 시급*" placeholder="입력" />
           </div>
-
+          <div>
+            <ImageUpload onFileChange={handleFileChange} />
+          </div>
           <div>
             <CustomTextarea label="가게 설명" placeholder="입력" />
           </div>
