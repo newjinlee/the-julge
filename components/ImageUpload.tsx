@@ -1,6 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
-import PreviewImage from '@/public/Group 87.svg';
+import AddImage from '@/public/Group 87.svg';
 
 interface ImageUploadProps {
   onFileChange: (file: File) => void;
@@ -26,14 +26,16 @@ export default function ImageUpload({ onFileChange }: ImageUploadProps) {
 
   return (
     <div className="flex flex-col gap-2 mb-8">
-      <label>가게 이미지</label>
+      <label htmlFor="file-upload" className="block">
+        가게 이미지
+      </label>
       <div className="mt-1 flex items-center">
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
         <div onClick={handleImageClick} className="cursor-pointer relative w-[455px] h-[276px]">
           {imageUrl ? (
             <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
           ) : (
-            <Image src={PreviewImage} alt="이미지 추가하기" layout="fill" objectFit="cover" />
+            <Image src={AddImage} alt="이미지 추가하기" layout="fill" objectFit="cover" />
           )}
         </div>
       </div>

@@ -11,9 +11,9 @@ export default function StoreInfoForm() {
   const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
   const addresses = ['서울시 종로구', '서울시 중구'];
 
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
 
-  const handleFileChange = (file: any) => {
+  const handleFileChange = (file: File) => {
     setFile(file);
   };
 
