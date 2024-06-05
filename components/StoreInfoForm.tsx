@@ -6,6 +6,12 @@ import CustomInput from './CustomInput';
 import CustomTextarea from './CustomTextarea';
 import Dropdown from './Dropdown';
 import ImageUpload from './ImageUpload';
+import Alert from './Alert';
+
+interface StoreInfoFormProps {
+  buttonText: string;
+  alertMessage: string;
+}
 
 const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
 const addresses = [
@@ -36,11 +42,20 @@ const addresses = [
   '서울시 강동구',
 ];
 
-export default function StoreInfoForm() {
+export default function StoreInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const handleFileChange = (file: File) => {
     setFile(file);
+  };
+
+  const handleAlertOpen = () => {
+    setShowAlert(true);
+  };
+
+  const handleAlertClose = () => {
+    setShowAlert(false);
   };
 
   return (
@@ -72,10 +87,13 @@ export default function StoreInfoForm() {
           </div>
         </div>
         <div className="flex justify-center">
-          <button className="w-[312px] h-12 bg-red-500 text-white font-bold border rounded-md px-12 py-3 text-center whitespace-nowrap">
-            등록하기
+          <button
+            onClick={handleAlertOpen}
+            className="w-[312px] h-12 bg-red-500 text-white font-bold border rounded-md px-12 py-3 text-center whitespace-nowrap">
+            {buttonText}
           </button>
         </div>
+        {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} />}
       </div>
     </div>
   );
