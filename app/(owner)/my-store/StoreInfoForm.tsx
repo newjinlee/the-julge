@@ -74,7 +74,7 @@ export default function StoreInfoForm({ buttonText, alertMessage }: StoreInfoFor
             <CustomInput label="상세주소*" placeholder="입력" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CustomInput label="기본 시급*" placeholder="입력" />
+            <CustomInput label="기본 시급*" unit="원" placeholder="입력" />
           </div>
           <div>
             <ImageUpload onFileChange={handleFileChange} />
