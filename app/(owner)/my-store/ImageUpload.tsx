@@ -31,7 +31,9 @@ export default function ImageUpload({ onFileChange }: ImageUploadProps) {
       </label>
       <div className="mt-1 flex items-center">
         <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
-        <div onClick={handleImageClick} className="cursor-pointer relative w-[455px] h-[276px]">
+        <div
+          onClick={handleImageClick}
+          className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
           {imageUrl ? (
             <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
           ) : (
