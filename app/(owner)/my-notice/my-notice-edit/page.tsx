@@ -1,5 +1,4 @@
 import CustomInput from '@/components/CustomInput';
-import NoticeForm from './NoticeForm';
 import CustomTextarea from '@/components/CustomTextarea';
 
 const MyNoticeEdit = () => {
