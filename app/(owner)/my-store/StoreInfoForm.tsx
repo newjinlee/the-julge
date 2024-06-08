@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
-import CustomInput from './CustomInput';
-import CustomTextarea from './CustomTextarea';
-import Dropdown from './Dropdown';
+import CustomInput from '../../../components/CustomInput';
+import CustomTextarea from '../../../components/CustomTextarea';
+import Dropdown from '../../../components/Dropdown';
 import ImageUpload from './ImageUpload';
-import Alert from './Alert';
+import Alert from '../../../components/Alert';
 
 interface StoreInfoFormProps {
   buttonText: string;
@@ -63,21 +63,18 @@ export default function StoreInfoForm({ buttonText, alertMessage }: StoreInfoFor
       <div className="relative max-w-[964px] h-full mx-auto px-5 py-[60px] md:py-[60px]">
         <div className="flex items-center justify-between mb-7">
           <h1 className="font-bold text-2xl">가게 정보</h1>
-          <button>
-            <Image src={closeIcon} alt="닫기 버튼" className="w-8 h-8" />
-          </button>
         </div>
         <div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CustomInput label="가게 이름*" placeholder="입력" />
             <Dropdown label="분류*" options={categories} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Dropdown label="주소*" options={addresses} />
             <CustomInput label="상세주소*" placeholder="입력" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <CustomInput label="기본 시급*" placeholder="입력" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CustomInput label="기본 시급*" unit="원" placeholder="입력" />
           </div>
           <div>
             <ImageUpload onFileChange={handleFileChange} />
