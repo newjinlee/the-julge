@@ -5,7 +5,6 @@ import axios from 'axios';
 
 type Job = {
   id: string;
-  title: string;
   description: string;
   shop: {
     id: string; // shop_id
@@ -58,7 +57,6 @@ const NoticeDetailPage = () => {
 
   return (
     <div>
-      <h1>{job.title}</h1>
       <p>{job.description}</p>
     </div>
   );
