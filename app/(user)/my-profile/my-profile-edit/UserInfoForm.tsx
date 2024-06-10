@@ -3,7 +3,6 @@ import { useState } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
 import CustomInput from '../../../../components/CustomInput';
-import CustomTextarea from '../../../../components/CustomTextarea';
 import Dropdown from '../../../../components/Dropdown';
 import Alert from '../../../../components/Alert';
 
