@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -21,21 +20,19 @@ type Job = {
 };
 
 const NoticeDetailPage = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const shopId = searchParams.get('shopId');
-  const id = searchParams.get('id');
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
+        const urlParts = window.location.pathname.split('/');
+        const shopId = urlParts[urlParts.length - 2];
+        const id = urlParts[urlParts.length - 1];
+
         if (shopId && id) {
           console.log(`Fetching job details for shopId: ${shopId}, id: ${id}`);
-          const response = await axios.get(
-            `https://bootcamp-api.codeit.kr/api/1-0/the-julge/shops/${shopId}/notices/${id}`,
-          );
+          const response = await axios.get(`https://bootcamp-api.codeit.kr/api/0-1/the-julge/shops/${shopId}/notices/${id}`);
           console.log('API response:', response.data);
           setJob(response.data.item);
           setError(null);
@@ -49,7 +46,7 @@ const NoticeDetailPage = () => {
     };
 
     fetchJob();
-  }, [shopId, id]);
+  }, []);
 
   if (error) {
     return <div>{error}</div>;

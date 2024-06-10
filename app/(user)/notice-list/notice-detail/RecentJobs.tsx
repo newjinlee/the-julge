@@ -26,7 +26,7 @@ const RecentJobs = () => {
 
   const handleClick = (job: Job) => {
     saveRecentJob(job);
-    router.push('/notice-list/notice-detail/${job.shopId}/${job.id}');
+    router.push('/notice-list/notice-detail?shopId=${job.shopId}&id=${job.id}');
   };
 
   return (
