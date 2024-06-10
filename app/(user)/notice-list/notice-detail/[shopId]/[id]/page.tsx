@@ -1,4 +1,6 @@
-import { useRouter } from 'next/router';
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -15,29 +17,38 @@ type Job = {
     description: string;
     imageUrl: string;
     originalHourlyPay: number;
-  }
+  };
 };
 
 const NoticeDetailPage = () => {
   const router = useRouter();
-  const { shopId, id } = router.query;
+  const searchParams = useSearchParams();
+  const shopId = searchParams.get('shopId');
+  const id = searchParams.get('id');
   const [job, setJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (shopId && id) {
-      axios.get(`https://bootcamp-api.codeit.kr/api/1-0/the-julge/shops/${shopId}/notices/${id}`)
-        .then((response: { data: { item: Job } }) => {
+    const fetchJob = async () => {
+      try {
+        if (shopId && id) {
+          console.log(`Fetching job details for shopId: ${shopId}, id: ${id}`);
+          const response = await axios.get(
+            `https://bootcamp-api.codeit.kr/api/1-0/the-julge/shops/${shopId}/notices/${id}`,
+          );
+          console.log('API response:', response.data);
           setJob(response.data.item);
           setError(null);
-        })
-        .catch((error: any) => {
-          console.error('Failed to load job details', error);
-          setError('Failed to load job details');
-        });
-    } else {
-      setError('Invalid job ID or shop ID');
-    }
+        } else {
+          setError('Invalid job ID or shop ID');
+        }
+      } catch (error: any) {
+        console.error('Failed to load job details', error);
+        setError('Failed to load job details');
+      }
+    };
+
+    fetchJob();
   }, [shopId, id]);
 
   if (error) {
