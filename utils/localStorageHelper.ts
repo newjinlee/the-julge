@@ -1,4 +1,5 @@
 type Job = {
+  shopId: string;
   id: string;
   image: string;
   title: string;
@@ -18,3 +19,5 @@ export const saveRecentJob = (job: Job) => {
 export const getRecentJobs = (): Job[] => {
   return JSON.parse(localStorage.getItem('recentJobs') || '[]');
 };
+
+

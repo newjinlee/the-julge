@@ -6,24 +6,43 @@ type Job = {
   id: string;
   title: string;
   description: string;
+  shop: {
+    id: string; // shop_id
+    name: string;
+    category: string;
+    address1: string;
+    address2: string;
+    description: string;
+    imageUrl: string;
+    originalHourlyPay: number;
+  }
 };
 
 const NoticeDetailPage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { shopId, id } = router.query;
   const [job, setJob] = useState<Job | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/{shop_id}/notices/${id}`)
+    if (shopId && id) {
+      axios.get(`https://bootcamp-api.codeit.kr/api/1-0/the-julge/shops/${shopId}/notices/${id}`)
         .then((response: { data: { item: Job } }) => {
           setJob(response.data.item);
+          setError(null);
         })
         .catch((error: any) => {
           console.error('Failed to load job details', error);
+          setError('Failed to load job details');
         });
+    } else {
+      setError('Invalid job ID or shop ID');
     }
-  }, [id]);
+  }, [shopId, id]);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   if (!job) {
     return <div>Loading...</div>;
