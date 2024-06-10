@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { useRouter } from 'next/router'; // next/router에서 useRouter를 임포트합니다.
 
 export default function Page() {
   const [workType, setWorkType] = useState('');
@@ -11,6 +12,8 @@ export default function Page() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordValidationError, setPasswordValidationError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false); // 성공 메시지 모달의 표시 상태
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
@@ -18,8 +21,10 @@ export default function Page() {
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    if (validateEmail(value) === true || value === '') {
+    const email = e.target.value;
+    setEmail(email);
+
+    if (validateEmail(email) === true || email === '') {
       setEmailError('');
     } else {
       setEmailError('이메일 형식으로 작성해 주세요.');
@@ -47,12 +52,18 @@ export default function Page() {
 
   async function handleRegisterButton(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-
-    await axios.post('https://bootcamp-api.codeit.kr/api/5-7/the-julge/users', {
-      email,
-      password,
-      type: workType,
-    });
+    try {
+      await axios.post('https://bootcamp-api.codeit.kr/api/5-7/the-julge/users', {
+        email,
+        password,
+        type: workType,
+      });
+      setSuccessModal(true); // 성공 시 성공 메시지 모달을 표시합니다.
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setShowModal(true);
+      }
+    }
   }
 
   return (
@@ -140,6 +151,26 @@ export default function Page() {
           </div>
         </div>
       </form>
+      {showModal && (
+        <div className="absolute top-50 left-50 w-[200px] h-[80px]  flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg">
+            <h2>알림</h2>
+            <p>이미 가입된 이메일입니다.</p>
+            <button onClick={() => setShowModal(false)}>닫기</button>
+          </div>
+        </div>
+      )}
+      {successModal && (
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg">
+            <h2>알림</h2>
+            <p>회원가입이 완료되었습니다.</p>
+            <Link href="/login">
+              <h1>로그인하러 가기</h1>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
