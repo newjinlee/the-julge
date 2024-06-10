@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+
 export default function Page() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -13,7 +14,7 @@ export default function Page() {
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const { value } = e.target;
     if (validateEmail(value) == true || value == '') {
       setEmailError('');
     } else {
@@ -33,6 +34,7 @@ export default function Page() {
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
       <Image src={'/logo-big.png'} height={45} width={248} alt="logo"></Image>
+
       <form>
         <div className="flex flex-col gap-4">
           <div>
@@ -69,4 +71,3 @@ export default function Page() {
     </div>
   );
 }
-
