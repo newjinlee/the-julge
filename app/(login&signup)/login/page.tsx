@@ -2,11 +2,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function Page() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
@@ -15,6 +19,7 @@ export default function Page() {
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+    setEmail(value);
     if (validateEmail(value) === true || value === '') {
       setEmailError('');
     } else {
@@ -24,12 +29,24 @@ export default function Page() {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const pw = e.target.value;
+    setPassword(pw);
     if (pw.length >= 8 || pw === '') {
       setPasswordError('');
     } else {
       setPasswordError('비밀번호는 8자 이상이어야 합니다.');
     }
   };
+
+  async function handleLogin(e: React.MouseEvent<HTMLButtonElement>): Promise<any> {
+    e.preventDefault();
+
+    await axios.post(
+      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/token`,
+
+      { email, password },
+    );
+    router.push('/notice-list');
+  }
 
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
@@ -57,7 +74,9 @@ export default function Page() {
             {passwordError && <h1 className="text-red-500">{passwordError}</h1>}
           </div>
 
-          <button className="w-[350px] h-[48px] bg-[#EA3C12] text-[16px] font-semibold rounded-md text-white">
+          <button
+            className="w-[350px] h-[48px] bg-[#EA3C12] text-[16px] font-semibold rounded-md text-white"
+            onClick={handleLogin}>
             로그인하기
           </button>
           <div className="flex justify-center">
