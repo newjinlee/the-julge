@@ -1,6 +1,7 @@
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   unit?: string;
+  name?: string;
 }
 
 export default function CustomInput({ label, unit, type = 'text', ...rest }: CustomInputProps) {

@@ -6,4 +6,17 @@ const axiosInstance: AxiosInstance = axios.create({
   headers: { 'X-Custom-Header': 'foobar' },
 });
 
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token'); // 토큰을 로컬 저장소에서 가져옵니다.
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  },
+);
+
 export default axiosInstance;
