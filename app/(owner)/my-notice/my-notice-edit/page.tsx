@@ -3,11 +3,27 @@
 import CustomInput from '@/components/CustomInput';
 import CustomTextarea from '@/components/CustomTextarea';
 import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
-import axiosInstance from '@/lib/axios';
-// import axios from 'axios';
-import { useAuth } from '@/lib/context/AuthProvider';
+import { useEffect, useState } from 'react';
 
+interface UserData {
+  id: string;
+  email: string;
+  type: 'employer' | 'employee';
+  name?: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
+  shop: {
+    id: string;
+    name: string;
+    category: string;
+    address1: string;
+    address2: string;
+    description: string;
+    imageUrl: string;
+    originalHourlyPay: number;
+  } | null;
+}
 interface Notice {
   wage: string;
   startDate: string;
@@ -16,6 +32,7 @@ interface Notice {
 }
 
 const MyNoticeEdit = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [notice, setNotice] = useState<Notice>({
     wage: '',
     startDate: '',
@@ -23,8 +40,30 @@ const MyNoticeEdit = () => {
     description: '',
   });
 
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          const response = await fetch(`/api/users/${userId}`);
+          const userData = await response.json();
+          setUserData(userData);
+        } else {
+          console.log('no token');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(userData);
   };
 
   return (
