@@ -18,9 +18,9 @@ export default function Page() {
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setEmail(value);
-    if (validateEmail(value) === true || value === '') {
+    const email = e.target.value;
+    setEmail(email);
+    if (validateEmail(email) === true || email === '') {
       setEmailError('');
     } else {
       setEmailError('이메일 형식으로 작성해 주세요.');
