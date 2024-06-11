@@ -6,21 +6,25 @@ import Image from 'next/image';
 
 type Job = {
   id: string;
-  title: string;
   description: string;
   startsAt: string;
   hourlyPay: number;
   workhour: number;
+  closed: boolean;
   shop: {
-    id: string; // shop_id
-    name: string;
-    category: string;
-    address1: string;
-    address2: string;
-    description: string;
-    imageUrl: string;
-    originalHourlyPay: number;
+    item: {
+      id: string; // shop_id
+      name: string;
+      category: string;
+      address1: string;
+      address2: string;
+      description: string;
+      imageUrl: string;
+      originalHourlyPay: number;
+    };
+    href: string;
   };
+  currentUserApplication: any | null; // 현재 사용자 지원 정보 (optional)
 };
 
 const JobDetail = () => {
@@ -60,18 +64,20 @@ const JobDetail = () => {
     return <div>Loading...</div>;
   }
 
+  const shop = job.shop.item;
+
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
       <div className="w-full flex flex-col items-start gap-8">
         <div className="w-full">
-          <h2 className="text-orange-600 text-base font-bold">{job.shop.category}</h2>
-          <h1 className="text-gray-900 text-2xl font-bold mb-6">{job.shop.name}</h1>
+          <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
+          <h1 className="text-gray-900 text-2xl font-bold mb-6">{shop.name}</h1>
           <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
             <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
               <Image
                 className="w-full h-full object-cover"
-                src={job.shop.imageUrl}
-                alt={job.shop.name}
+                src={shop.imageUrl}
+                alt={shop.name}
                 width={597}
                 height={543}
               />
@@ -82,7 +88,7 @@ const JobDetail = () => {
                 <div className="flex items-center gap-4 mt-2">
                   <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString()}원</span>
                   <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
-                    <span>기존 시급보다 {(job.hourlyPay / job.shop.originalHourlyPay * 100).toFixed(0)}%</span>
+                    <span>기존 시급보다 {(job.hourlyPay / shop.originalHourlyPay * 100).toFixed(0)}%</span>
                     <div className="w-5 h-5 relative">
                       <Image src="/arrow-up-icon.png" alt="arrow upper" fill style={{ objectFit: 'cover' }} />
                     </div>
@@ -99,9 +105,9 @@ const JobDetail = () => {
                 <div className="w-5 h-5 relative">
                   <Image src="/location-icon.png" alt="location" fill style={{ objectFit: 'cover' }} />
                 </div>
-                <p className="text-gray-600">{job.shop.address1}</p>
+                <p className="text-gray-600">{shop.address1}</p>
               </div>
-              <p className="mt-4 text-gray-900">{job.shop.description}</p>
+              <p className="mt-4 text-gray-900">{shop.description}</p>
               <div className="mt-6">
                 <button type="button" className="w-full bg-orange-600 text-white py-3 rounded-md font-bold">
                   신청하기
