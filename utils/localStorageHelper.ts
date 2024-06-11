@@ -17,7 +17,7 @@ type Job = {
     };
     href: string;
   };
-  currentUserApplication: any | null; // 현재 사용자 지원 정보 (optional)
+  currentUserApplication: any | null;
 };
 
 export const saveRecentJob = (job: Job) => {

@@ -33,6 +33,7 @@ const RecentJobs = () => {
 
   useEffect(() => {
     const jobs = getRecentJobs();
+    console.log('Recent jobs from localStorage:', jobs);
     setRecentJobs(jobs);
   }, []);
 
@@ -43,25 +44,24 @@ const RecentJobs = () => {
 
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline w-fit mx-auto py-[60px] pb-[120px]">
-      <div className="max-w-[964px] mx-auto">
+      <div className="box-border m-0 p-0 border-none text-decoration-none select-none outline-none font-inherit align-baseline flex flex-col items-start justify-start max-w-[964px] gap-8">
         <h2 className="text-2xl font-bold mb-6 text-left">최근에 본 공고</h2>
         {recentJobs.length === 0 ? (
           <p className="text-center text-gray-500">최근에 본 공고가 없습니다</p>
         ) : (
           <div className="flex flex-wrap gap-3.5">
-            {recentJobs.map((job) => (
+            {recentJobs.map(job => (
               <div key={job.id} onClick={() => handleClick(job)}>
                 <JobCard
                   key={job.id}
-                  shopId={job.shop.item.id}
                   id={job.id}
-                  image={job.shop.item.imageUrl}
-                  title={job.shop.item.name}
-                  time={`${new Date(job.startsAt).toLocaleString()} (${job.workhour}시간)`}
-                  location={job.shop.item.address1}
-                  wage={`${job.hourlyPay.toLocaleString()}원`}
-                  alarm={job.hourlyPay > job.shop.item.originalHourlyPay}
-                  percentage={`${((job.hourlyPay / job.shop.item.originalHourlyPay) * 100).toFixed(0)}%`}
+                  startsAt={job.startsAt}
+                  hourlyPay={job.hourlyPay}
+                  workhour={job.workhour}
+                  closed={job.closed}
+                  shop={job.shop}
+                  currentUserApplication={job.currentUserApplication}
+                  onClick={() => handleClick(job)}
                 />
               </div>
             ))}
