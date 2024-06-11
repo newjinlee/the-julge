@@ -68,7 +68,9 @@ export default function Page() {
 
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
-      <Image src={'/logo-big.png'} height={45} width={248} alt="logo"></Image>
+      <Link href="/notice-list">
+        <Image src="/logo-big.png" height={45} width={248} alt="logo" />
+      </Link>
       <form>
         <div className="flex flex-col gap-4">
           <div>
