@@ -54,7 +54,6 @@ export default function Page() {
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
       <Link href="/notice-list">
-        {' '}
         <Image src="/logo-big.png" height={45} width={248} alt="logo" />
       </Link>
 
