@@ -4,10 +4,11 @@ import AddImage from '@/public/Group 87.svg';
 
 interface ImageUploadProps {
   onFileChange: (file: File) => void;
+  value: string | null;
 }
 
-export default function ImageUpload({ onFileChange }: ImageUploadProps) {
-  const [imageUrl, setImageUrl] = useState<string>('');
+export default function ImageUpload({ onFileChange, value }: ImageUploadProps) {
+  const [imageUrl, setImageUrl] = useState<string | null>(value);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
