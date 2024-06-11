@@ -13,7 +13,7 @@ const config: tailwindConfig.Config = {
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       fontFamily: {
-        spoqa: ['Spoqa Han Sans Neo', 'sans-serif'],
+        spoqa: ['var(--font-spoqa)'],
       },
       colors: {
         'The-julge-black': '#111322',
