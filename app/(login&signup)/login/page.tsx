@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // 수정: 'next/navigation'에서 'next/router'로 변경
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 export default function Page() {
@@ -33,13 +33,19 @@ export default function Page() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post('https://bootcamp-api.codeit.kr/api/5-7/the-julge/token', { email, password });
+      const response = await axios.post('https://bootcamp-api.codeit.kr/api/5-7/the-julge/token', { email, password });
+      // Save the token to local storage
+      const { token, user } = response.data.item;
+      localStorage.setItem('token', token);
+      localStorage.setItem('userId', user.item.id);
+      localStorage.setItem('userEmail', user.item.email);
+      localStorage.setItem('userType', user.item.type);
       router.push('/notice-list');
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
         setShowModal(true);
       } else {
-        // 다른 에러 처리
+        // Show modal for any other error
         setShowModal(true);
       }
     }
