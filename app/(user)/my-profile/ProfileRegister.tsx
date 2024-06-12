@@ -1,6 +1,24 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 export default function ProfileRegister() {
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    async function getApplyData() {
+      const response = await axios.get(
+        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+    }
+  });
+
   return (
     <>
       <h1 className="text-[28px] font-bold  mb-[25px]"> 내 프로필</h1>
