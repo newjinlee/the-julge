@@ -64,6 +64,44 @@ const MyNoticeEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(userData);
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error('no token found');
+      return;
+    }
+
+    const test = {
+      name: '테스트',
+      category: '한식',
+      address1: '서울시 종로구',
+      address2: '코드잇',
+      description: 'test',
+      imageUrl:
+        'https://png.pngtree.com/png-vector/20210601/ourlarge/pngtree-shopping-shop-illustration-png-image_3375661.jpg',
+      originalHourlyPay: 10000,
+    };
+
+    try {
+      const response = await fetch(`/api/shops`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(test),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to register notice');
+      }
+
+      const responseData = await response.json();
+      console.log('Notice registered successfully:', responseData);
+    } catch (error) {
+      console.error('Error registering notice:', error);
+    }
   };
 
   return (
