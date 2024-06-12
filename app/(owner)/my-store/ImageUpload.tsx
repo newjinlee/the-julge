@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import AddImage from '@/public/Group 87.svg';
 import axiosInstance from '@/app/api/lib/axios';
@@ -15,6 +15,10 @@ export default function ImageUpload({ onFileChange, value }: ImageUploadProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(value);
   const [uploading, setUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setImageUrl(value);
+  }, [value]);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

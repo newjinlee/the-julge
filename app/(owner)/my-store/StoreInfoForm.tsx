@@ -13,8 +13,17 @@ interface StoreInfoFormProps {
   buttonText: string;
   alertMessage: string;
   method: 'POST' | 'PUT';
+  shopId?: string;
+  initialValues?: {
+    name: string;
+    category: string;
+    address1: string;
+    address2: string;
+    originalHourlyPay: number;
+    description: string;
+    imageUrl: string;
+  };
 }
-
 const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
 const addresses = [
   '서울시 종로구',
@@ -44,44 +53,27 @@ const addresses = [
   '서울시 강동구',
 ];
 
-export default function StoreInfoForm({ buttonText, alertMessage, method }: StoreInfoFormProps) {
+export default function StoreInfoForm({ buttonText, alertMessage, method, shopId, initialValues }: StoreInfoFormProps) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
-  const [shopId, setShopId] = useState<string | null>(null);
-  const [myuserData, setMyUserData] = useState<string | null>(null);
+
+  console.log(initialValues);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId');
-
-    const fetchUserInfo = async () => {
-      if (storedUserId) {
-        try {
-          const response = await fetch(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${storedUserId}`);
-          const userData = await response.json();
-          setMyUserData(userData);
-          const shopId = userData?.item?.shop?.item.id; // 가게 ID 추출
-          setShopId(shopId);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      } else {
-        console.log('no token');
-      }
-    };
-
     setToken(storedToken);
-    fetchUserInfo();
   }, []);
+
+  useEffect(() => {
+    formik.setValues(initialValues);
+  }, [initialValues]);
 
   const handleAlertOpen = () => {
     setShowAlert(true);
   };
-
   const handleAlertClose = () => {
     setShowAlert(false);
   };
-
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -100,8 +92,11 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
           throw new Error('토큰이 없습니다');
         }
 
-        const responseData =
-          method === 'POST' ? await registerStore(token, values) : await editStore(token, shopId, values);
+        if (method === 'POST') {
+          await registerStore(token, values);
+        } else if (method === 'PUT') {
+          await editStore(token, shopId, values);
+        }
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -190,18 +185,4 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
       </div>
     </form>
   );
-}
-function createShop(
-  token: string,
-  values: {
-    name: string;
-    category: string;
-    address1: string;
-    address2: string;
-    originalHourlyPay: number;
-    description: string;
-    imageUrl: string;
-  },
-) {
-  throw new Error('Function not implemented.');
 }
