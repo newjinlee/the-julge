@@ -1,9 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import axiosInstance from '@/app/api/lib/axios';
 import { useFormik } from 'formik';
 import { registerStore } from '@/app/api/(owner)/my-store/registerstore';
-import { editStore } from '@/app/api/(owner)/my-store/[shopId]/editstore';
+import { editStore } from '@/app/api/(owner)/my-store/editstore';
 import CustomInput from '../../../components/CustomInput';
 import CustomTextarea from '../../../components/CustomTextarea';
 import Dropdown from '../../../components/Dropdown';
@@ -49,10 +48,30 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [shopId, setShopId] = useState<string | null>(null);
+  const [myuserData, setMyUserData] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+
+    const fetchUserInfo = async () => {
+      if (storedUserId) {
+        try {
+          const response = await fetch(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${storedUserId}`);
+          const userData = await response.json();
+          setMyUserData(userData);
+          const shopId = userData?.item?.shop?.item.id; // 가게 ID 추출
+          setShopId(shopId);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } else {
+        console.log('no token');
+      }
+    };
+
     setToken(storedToken);
+    fetchUserInfo();
   }, []);
 
   const handleAlertOpen = () => {
@@ -76,21 +95,13 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
     onSubmit: async (values, { setSubmitting }) => {
       try {
         console.log('Form Values:', values);
-        const shopId = userData?.shop?.item?.id;
+
         if (!token) {
           throw new Error('토큰이 없습니다');
         }
 
         const responseData =
-          method === 'POST'
-            ? await registerStore(token, values)
-            : await editStore(token, values, { params: { shopId } });
-
-        // 여기서 responseData를 확인하고 id를 추출합니다.
-        const { id } = responseData.item;
-        console.log('가게 ID:', id);
-
-        console.log('가게 정보 처리 완료:');
+          method === 'POST' ? await registerStore(token, values) : await editStore(token, shopId, values);
       } catch (error) {
         console.error('Error:', error);
       } finally {

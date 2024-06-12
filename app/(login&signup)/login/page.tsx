@@ -53,7 +53,9 @@ export default function Page() {
 
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
-      <Image src="/logo-big.png" height={45} width={248} alt="logo" />
+      <Link href="/notice-list">
+        <Image src="/logo-big.png" height={45} width={248} alt="logo" />
+      </Link>
 
       <form onSubmit={handleLogin}>
         <div className="flex flex-col gap-4">
@@ -86,7 +88,12 @@ export default function Page() {
           </button>
         </div>
       </form>
-
+      <div className="flex justify-center">
+        <h1> 회원이 아니신가요? </h1>
+        <Link className="ml-3 text-blue-500 hover:underline" href="/signup">
+          회원가입가기
+        </Link>
+      </div>
       {showModal && (
         <div className="absolute top-50 left-50 w-[200px] h-[80px] flex justify-center items-center bg-black bg-opacity-50">
           <div className="bg-white p-5 rounded-lg">

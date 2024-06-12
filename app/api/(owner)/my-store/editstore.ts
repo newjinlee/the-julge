@@ -1,13 +1,7 @@
-import axiosInstance from '../../../lib/axios';
-import { ShopData } from '../registerstore';
+import axiosInstance from '../../lib/axios';
+import { ShopData } from './registerstore';
 
-export const editStore = async (
-  token: string,
-  shopData: ShopData,
-  { params }: { params: { shopId: string | null } },
-) => {
-  const { shopId } = params;
-
+export const editStore = async (token: string, shopId: string | null, shopData: ShopData) => {
   try {
     const response = await axiosInstance({
       method: 'PUT',
