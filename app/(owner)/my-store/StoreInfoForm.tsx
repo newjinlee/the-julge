@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axiosInstance from '@/lib/axios';
 import { useFormik } from 'formik';
 import CustomInput from '../../../components/CustomInput';
@@ -56,11 +56,12 @@ const addresses = [
 export default function StoreInfoForm({ buttonText, alertMessage, method }: StoreInfoFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [token] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  const handleFileChange = (file: File) => {
-    setFile(file);
-  };
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []);
 
   const handleAlertOpen = () => {
     setShowAlert(true);
@@ -93,7 +94,10 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          data: values,
+          data: {
+            ...values,
+            originalHourlyPay: Number(values.originalHourlyPay), // 시급을 숫자로 변환
+          },
         });
 
         console.log(response.data);

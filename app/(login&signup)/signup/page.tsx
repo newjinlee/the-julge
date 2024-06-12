@@ -2,14 +2,18 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import axios from 'axios';
+import { useRouter } from 'next/router'; // next/router에서 useRouter를 임포트합니다.
 
 export default function Page() {
-  const [selectedType, setSelectedType] = useState('');
+  const [workType, setWorkType] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordValidationError, setPasswordValidationError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false); // 성공 메시지 모달의 표시 상태
 
   const validateEmail = (email: string) => {
     const re = /\S+@\S+\.\S+/;
@@ -17,13 +21,16 @@ export default function Page() {
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (validateEmail(value) == true || value == '') {
+    const email = e.target.value;
+    setEmail(email);
+
+    if (validateEmail(email) === true || email === '') {
       setEmailError('');
     } else {
       setEmailError('이메일 형식으로 작성해 주세요.');
     }
   };
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const pw = e.target.value;
     setPassword(pw);
@@ -42,6 +49,22 @@ export default function Page() {
       setPasswordValidationError('비밀번호가 일치하지 않습니다.');
     }
   };
+
+  async function handleRegisterButton(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    try {
+      await axios.post('https://bootcamp-api.codeit.kr/api/5-7/the-julge/users', {
+        email,
+        password,
+        type: workType,
+      });
+      setSuccessModal(true); // 성공 시 성공 메시지 모달을 표시합니다.
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setShowModal(true);
+      }
+    }
+  }
 
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
@@ -83,39 +106,41 @@ export default function Page() {
           <div className="flex justify-between mb-4">
             <div
               className={`w-[167px] h-[50px] flex justify-center items-center gap-2 border-solid border-2 rounded-3xl cursor-pointer ${
-                selectedType === 'user' ? 'border-[#EA3C12]' : 'border-gray-200'
+                workType === 'employee' ? 'border-[#EA3C12]' : 'border-gray-200'
               }`}
-              onClick={() => setSelectedType('user')}>
+              onClick={() => setWorkType('employee')}>
               <input
                 type="radio"
-                id="user"
+                id="employee"
                 name="type"
-                value="user"
+                value="employee"
                 className="w-[20px] h-[20px]"
-                checked={selectedType === 'user'}
-                onChange={() => setSelectedType('user')}
+                checked={workType === 'employee'}
+                onChange={() => setWorkType('employee')}
               />
-              <label htmlFor="user">알바님</label>
+              <label htmlFor="employee">알바님</label>
             </div>
             <div
               className={`w-[167px] h-[50px] flex justify-center items-center gap-2 border-solid border-2 rounded-3xl cursor-pointer ${
-                selectedType === 'owner' ? 'border-[#EA3C12]' : 'border-gray-200'
+                workType === 'employer' ? 'border-[#EA3C12]' : 'border-gray-200'
               }`}
-              onClick={() => setSelectedType('owner')}>
+              onClick={() => setWorkType('employer')}>
               <input
                 type="radio"
-                id="owner"
+                id="employer"
                 name="type"
-                value="owner"
+                value="employer"
                 className="w-[20px] h-[20px]"
-                checked={selectedType === 'owner'}
-                onChange={() => setSelectedType('owner')}
+                checked={workType === 'employer'}
+                onChange={() => setWorkType('employer')}
               />
-              <label htmlFor="owner">사장님</label>
+              <label htmlFor="employer">사장님</label>
             </div>
           </div>
 
-          <button className="w-[350px] h-[48px] bg-[#EA3C12] text-[16px] font-semibold rounded-md text-white">
+          <button
+            className="w-[350px] h-[48px] bg-[#EA3C12] text-[16px] font-semibold rounded-md text-white"
+            onClick={handleRegisterButton}>
             가입하기
           </button>
           <div className="flex justify-center">
@@ -126,6 +151,26 @@ export default function Page() {
           </div>
         </div>
       </form>
+      {showModal && (
+        <div className="absolute top-50 left-50 w-[200px] h-[80px]  flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg">
+            <h2>알림</h2>
+            <p>이미 가입된 이메일입니다.</p>
+            <button onClick={() => setShowModal(false)}>닫기</button>
+          </div>
+        </div>
+      )}
+      {successModal && (
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg">
+            <h2>알림</h2>
+            <p>회원가입이 완료되었습니다.</p>
+            <Link href="/login">
+              <h1>로그인하러 가기</h1>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
