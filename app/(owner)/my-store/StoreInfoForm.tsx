@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import axiosInstance from '@/lib/axios';
+import axiosInstance from '@/app/api/lib/axios';
 import { useFormik } from 'formik';
+import { registerStore } from '@/app/api/(owner)/my-store/registerstore';
+import { editStore } from '@/app/api/(owner)/my-store/[shopId]/editstore';
 import CustomInput from '../../../components/CustomInput';
 import CustomTextarea from '../../../components/CustomTextarea';
 import Dropdown from '../../../components/Dropdown';
@@ -12,16 +14,6 @@ interface StoreInfoFormProps {
   buttonText: string;
   alertMessage: string;
   method: 'POST' | 'PUT';
-}
-
-interface FormData {
-  name: string;
-  category: string;
-  address1: string;
-  address2: string;
-  description: string;
-  imageUrl: string;
-  originalHourlyPay: number;
 }
 
 const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
@@ -54,9 +46,9 @@ const addresses = [
 ];
 
 export default function StoreInfoForm({ buttonText, alertMessage, method }: StoreInfoFormProps) {
-  const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
+  const [shopId, setShopId] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -84,23 +76,21 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
     onSubmit: async (values, { setSubmitting }) => {
       try {
         console.log('Form Values:', values);
+        const shopId = userData?.shop?.item?.id;
         if (!token) {
           throw new Error('토큰이 없습니다');
         }
 
-        const response = await axiosInstance({
-          method,
-          url: method === 'POST' ? '/shops' : `/shops/`,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          data: {
-            ...values,
-            originalHourlyPay: Number(values.originalHourlyPay), // 시급을 숫자로 변환
-          },
-        });
+        const responseData =
+          method === 'POST'
+            ? await registerStore(token, values)
+            : await editStore(token, values, { params: { shopId } });
 
-        console.log(response.data);
+        // 여기서 responseData를 확인하고 id를 추출합니다.
+        const { id } = responseData.item;
+        console.log('가게 ID:', id);
+
+        console.log('가게 정보 처리 완료:');
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -161,7 +151,7 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
             </div>
             <div>
               <ImageUpload
-                onFileChange={(file: File) => formik.setFieldValue('imageUrl', file)}
+                onFileChange={(imageUrl: string) => formik.setFieldValue('imageUrl', imageUrl)}
                 value={formik.values.imageUrl}
               />
             </div>
@@ -189,4 +179,18 @@ export default function StoreInfoForm({ buttonText, alertMessage, method }: Stor
       </div>
     </form>
   );
+}
+function createShop(
+  token: string,
+  values: {
+    name: string;
+    category: string;
+    address1: string;
+    address2: string;
+    originalHourlyPay: number;
+    description: string;
+    imageUrl: string;
+  },
+) {
+  throw new Error('Function not implemented.');
 }

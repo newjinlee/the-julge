@@ -1,6 +1,6 @@
 // createPresignedUrl.ts
 
-import axiosInstance from '@/lib/axios';
+import axiosInstance from '@/app/api/lib/axios';
 
 async function createPresignedUrl(imageName: string): Promise<string> {
   try {

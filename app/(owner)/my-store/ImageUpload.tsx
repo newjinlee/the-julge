@@ -1,13 +1,13 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import Image from 'next/image';
 import AddImage from '@/public/Group 87.svg';
-import axiosInstance from '@/lib/axios';
+import axiosInstance from '@/app/api/lib/axios';
 import createPresignedUrl from '@/app/api/(owner)/my-store/createPresignedUrl';
-import uploadImageToS3 from '@/app/api/(owner)/my-store/uploadImageToS3';
-import getImageUrlWithoutQueryParams from '@/app/api/(owner)/my-store/getImageUrlWithoutQueryParams';
+import uploadImageToS3 from '@/utils/uploadImageToS3';
+import getImageUrlWithoutQueryParams from '@/utils/getImageUrlWithoutQueryParams';
 
 interface ImageUploadProps {
-  onFileChange: (file: File) => void;
+  onFileChange: (imageUrl: string) => void;
   value: string | null;
 }
 
@@ -26,7 +26,7 @@ export default function ImageUpload({ onFileChange, value }: ImageUploadProps) {
 
         const imageUrlWithoutQueryParams = getImageUrlWithoutQueryParams(presignedUrl); // 쿼리 파라미터 제거한 URL
         setImageUrl(imageUrlWithoutQueryParams); // 이미지 URL 설정
-        onFileChange(file); // 이미지 파일을 부모 컴포넌트로 전달
+        onFileChange(imageUrlWithoutQueryParams); // 이미지 파일을 부모 컴포넌트로 전달
       } catch (error) {
         console.error('File upload error:', error);
       } finally {
