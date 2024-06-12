@@ -2,8 +2,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
-import CustomInput from '../../../../components/CustomInput';
-import Dropdown from '../../../../components/Dropdown';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import UserInput from './UserInput';
+import CustomTextarea from '../../../../components/CustomTextarea';
+import UserDropdown from './UserDropdown';
 import Alert from '../../../../components/Alert';
 
 interface StoreInfoFormProps {
@@ -41,19 +44,44 @@ const addresses = [
 ];
 
 export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+  const router = useRouter();
+
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [file, setFile] = useState<File | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [bio, setBio] = useState('');
 
   const handleFileChange = (file: File) => {
     setFile(file);
   };
 
-  const handleAlertOpen = () => {
-    setShowAlert(true);
-  };
-
-  const handleAlertClose = () => {
+  async function handleAlertOpen() {
+    try {
+      const response = await axios.put(
+        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`,
+        { name, phone, address, bio },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setShowAlert(true);
+      setErrorMessage('Update successful!'); // Optional: set a success message
+    } catch (error: any) {
+      setErrorMessage(error.response?.data?.error || 'Failed to update profile'); // Set a custom error message from the response if available
+      setShowAlert(true);
+    }
+  }
+  function handleAlertClose() {
     setShowAlert(false);
+    router.push('/my-profile');
+  }
+
+  const handleTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
   };
 
   return (
@@ -64,9 +92,9 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
         </div>
         <div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <CustomInput label="이름*" placeholder="입력" />
-            <CustomInput label="전화번호*" placeholder="입력" />
-            <Dropdown label="주소*" options={addresses} />
+            <UserInput label="이름*" placeholder="입력" value={name} onChange={e => setName(e.target.value)} />{' '}
+            <UserInput label="전화번호*" placeholder="입력" value={phone} onChange={e => setPhone(e.target.value)} />{' '}
+            <UserDropdown label="주소*" options={addresses} selectedOption={address} onOptionSelected={setAddress} />
           </div>
 
           <div></div>
@@ -75,7 +103,8 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
               <label>소개</label>
               <textarea
                 className="px-5 py-4 w-full h-[153px] border border-solid border-gray-300 rounded-md"
-                placeholder="입력"></textarea>
+                placeholder="입력"
+                onChange={handleTextArea}></textarea>
             </div>
           </div>
         </div>
@@ -86,7 +115,7 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
             {buttonText}
           </button>
         </div>
-        {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} />}
+        {showAlert && <Alert message={errorMessage} onClose={handleAlertClose} />}
       </div>
     </div>
   );
