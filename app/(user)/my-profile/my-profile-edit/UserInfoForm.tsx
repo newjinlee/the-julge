@@ -4,7 +4,7 @@ import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import UserInput from './UserInput';
+import UserInput from './UserInput'; // Import the missing module
 import CustomTextarea from '../../../../components/CustomTextarea';
 import UserDropdown from './UserDropdown';
 import Alert from '../../../../components/Alert';
@@ -71,7 +71,7 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
       setShowAlert(true);
       setErrorMessage('Update successful!'); // Optional: set a success message
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.error || 'Failed to update profile'); // Set a custom error message from the response if available
+      setErrorMessage(error.response?.data?.error || '전화번호가 올바르지 않습니다.'); // Set a custom error message from the response if available
       setShowAlert(true);
     }
   }
@@ -92,8 +92,18 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
         </div>
         <div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <UserInput label="이름*" placeholder="입력" value={name} onChange={e => setName(e.target.value)} />{' '}
-            <UserInput label="전화번호*" placeholder="입력" value={phone} onChange={e => setPhone(e.target.value)} />{' '}
+            <UserInput
+              label="이름*"
+              placeholder="입력"
+              value={name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+            />{' '}
+            <UserInput
+              label="전화번호*"
+              placeholder="입력"
+              value={phone}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
+            />{' '}
             <UserDropdown label="주소*" options={addresses} selectedOption={address} onOptionSelected={setAddress} />
           </div>
 
