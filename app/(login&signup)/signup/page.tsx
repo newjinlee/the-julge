@@ -68,7 +68,9 @@ export default function Page() {
 
   return (
     <div className="flex h-full justify-center flex-col items-center gap-10">
-      <Image src={'/logo-big.png'} height={45} width={248} alt="logo"></Image>
+      <Link href="/notice-list">
+        <Image src="/logo-big.png" height={45} width={248} alt="logo" />
+      </Link>
       <form>
         <div className="flex flex-col gap-4">
           <div>
@@ -152,21 +154,25 @@ export default function Page() {
         </div>
       </form>
       {showModal && (
-        <div className="absolute top-50 left-50 w-[200px] h-[80px]  flex justify-center items-center bg-black bg-opacity-50">
-          <div className="bg-white p-5 rounded-lg">
-            <h2>알림</h2>
-            <p>이미 가입된 이메일입니다.</p>
-            <button onClick={() => setShowModal(false)}>닫기</button>
+        <div className="absolute w-full h-full top-50 left-50  flex justify-center items-center bg-black bg-opacity-50">
+          <div className=" flex flex-col justify-center items-center bg-white rounded-lg w-[327px] h-[220px] lg:w-[540px] lg:h-[250px] ">
+            <p className="text-[18px] ">이미 가입된 이메일입니다.</p>
+            <div className="pb-[50px]"></div>
+            <button className=" w-[120px] h-[48px]  bg-[#EA3C12] rounded-md" onClick={() => setShowModal(false)}>
+              확인
+            </button>
           </div>
         </div>
       )}
+
       {successModal && (
-        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
-          <div className="bg-white p-5 rounded-lg">
-            <h2>알림</h2>
-            <p>회원가입이 완료되었습니다.</p>
+        <div className="absolute w-full h-full top-50 left-50  flex justify-center items-center bg-black bg-opacity-50">
+          <div className=" flex flex-col justify-center items-center bg-white rounded-lg w-[327px] h-[220px] lg:w-[540px] lg:h-[250px] ">
+            <p className="text-[18px] ">회원가입이 완료되었습니다.</p>
+            <div className="pb-[50px]"> </div>
+
             <Link href="/login">
-              <h1>로그인하러 가기</h1>
+              <button className=" w-[120px] h-[48px]  bg-[#EA3C12] rounded-md text-white">로그인하러 가기</button>
             </Link>
           </div>
         </div>
