@@ -1,3 +1,5 @@
+import MyNoticeList from './MyNoticeList';
+
 export default function Page() {
-  return <div>my-notice</div>;
+  return <MyNoticeList></MyNoticeList>;
 }
