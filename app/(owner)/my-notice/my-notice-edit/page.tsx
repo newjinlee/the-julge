@@ -4,104 +4,87 @@ import CustomInput from '@/components/CustomInput';
 import CustomTextarea from '@/components/CustomTextarea';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-interface UserData {
-  id: string;
-  email: string;
-  type: 'employer' | 'employee';
-  name?: string;
-  phone?: string;
-  address?: string;
-  bio?: string;
-  shop: {
-    id: string;
-    name: string;
-    category: string;
-    address1: string;
-    address2: string;
-    description: string;
-    imageUrl: string;
-    originalHourlyPay: number;
-  } | null;
-}
+import Calendar from '@/components/Calendar';
+import Alert from '@/components/Alert';
 interface Notice {
-  wage: string;
-  startDate: string;
-  workingHours: string;
+  hourlyPay: string;
+  startsAt: string | null;
+  workhour: string;
   description: string;
 }
 
 const MyNoticeEdit = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [notice, setNotice] = useState<Notice>({
-    wage: '',
-    startDate: '',
-    workingHours: '',
+    hourlyPay: '',
+    startsAt: '',
+    workhour: '',
     description: '',
   });
 
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [alertMessage, setalertMessage] = useState<string>('');
+
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          const response = await fetch(`/api/users/${userId}`);
-          const userData = await response.json();
-          setUserData(userData);
-        } else {
-          console.log('no token');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+  const handleAlertOpen = () => {
+    setShowAlert(true);
+  };
 
-    fetchUserInfo();
-  }, [router]);
+  const handleAlertClose = () => {
+    setShowAlert(false);
+  };
+
+  const handleDateChange = (date: string | null) => {
+    setNotice({ ...notice, startsAt: date });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(userData);
 
     const token = localStorage.getItem('token');
-
-    if (!token) {
-      console.error('no token found');
-      return;
-    }
-
-    const test = {
-      name: '테스트',
-      category: '한식',
-      address1: '서울시 종로구',
-      address2: '코드잇',
-      description: 'test',
-      imageUrl:
-        'https://png.pngtree.com/png-vector/20210601/ourlarge/pngtree-shopping-shop-illustration-png-image_3375661.jpg',
-      originalHourlyPay: 10000,
-    };
-
     try {
-      const response = await fetch(`/api/shops`, {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        console.error('로그인 필요');
+        setalertMessage('로그인이 필요합니다.');
+        return;
+      }
+
+      // userId로 shopId 조회
+      const shopResponse = await fetch(`/api/users/${userId}`);
+      if (!shopResponse.ok) {
+        throw new Error('회원정보 조회 실패');
+      }
+
+      const userData = await shopResponse.json();
+      const shopId = userData.item.shop?.item?.id;
+
+      if (!shopId) {
+        throw new Error('가게가 등록되어있지 않음');
+      }
+
+      // 공고 등록
+      const noticeResponse = await fetch(`/api/shops/${shopId}/notices`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(test),
+        body: JSON.stringify(notice),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to register notice');
+      if (!noticeResponse.ok) {
+        const errorResponse = await noticeResponse.json();
+        throw new Error(errorResponse.error || 'fail to register notice');
       }
 
-      const responseData = await response.json();
-      console.log('Notice registered successfully:', responseData);
-    } catch (error) {
-      console.error('Error registering notice:', error);
+      setalertMessage('등록이 완료되었습니다.');
+    } catch (error: any) {
+      console.error('Error', error);
+      setalertMessage(error.message);
     }
+
+    handleAlertOpen();
   };
 
   return (
@@ -114,26 +97,21 @@ const MyNoticeEdit = () => {
               label="시급*"
               unit="원"
               placeholder="0"
-              value={notice.wage}
-              onChange={e => setNotice({ ...notice, wage: e.target.value })}
+              value={notice.hourlyPay}
+              onChange={e => setNotice({ ...notice, hourlyPay: e.target.value })}
               className="border px-[20px] py-[16px] h-[58px] w-[308px]"
             />
           </div>
           <div className="w-[308px]">
-            <CustomInput
-              label="시작 일시*"
-              value={notice.startDate}
-              onChange={e => setNotice({ ...notice, startDate: e.target.value })}
-              className="border px-[20px] py-[16px] h-[58px] w-[308px]"
-            />
+            <Calendar label="시작 일시" value={notice.startsAt} isTime={true} onChange={handleDateChange} />
           </div>
           <div className="relative w-[308px]">
             <CustomInput
               label="업무 시간*"
               unit="시간"
               placeholder="0"
-              value={notice.workingHours}
-              onChange={e => setNotice({ ...notice, workingHours: e.target.value })}
+              value={notice.workhour}
+              onChange={e => setNotice({ ...notice, workhour: e.target.value })}
               className="border px-[20px] py-[16px] h-[58px] w-[308px]"
             />
           </div>
@@ -155,6 +133,8 @@ const MyNoticeEdit = () => {
           </button>
         </div>
       </form>
+
+      {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} />}
     </div>
   );
 };
