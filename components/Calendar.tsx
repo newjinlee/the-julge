@@ -9,7 +9,7 @@ interface CustomCalendarProps {
   onChange: (date: string | null) => void;
 }
 
-export default function Calendar({ label, value, isTime, onChange }: CustomCalendarProps) {
+export default function Calendar({ label, value, isTime = false, onChange }: CustomCalendarProps) {
   const initialDate = value ? new Date(value) : null;
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
   const [selectedTime, setSelectedTime] = useState<Date | null>(initialDate);
