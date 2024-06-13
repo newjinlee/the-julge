@@ -20,9 +20,13 @@ export default function Calendar({ label, value, isTime, onChange }: CustomCalen
       const combinedDate = new Date(date);
       combinedDate.setHours(selectedTime.getHours());
       combinedDate.setMinutes(selectedTime.getMinutes());
+      combinedDate.setSeconds(0);
+      combinedDate.setMilliseconds(0);
       onChange(combinedDate.toISOString());
     } else if (date && !isTime) {
-      onChange(date.toISOString());
+      const localDate = new Date(date);
+      localDate.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정
+      onChange(localDate.toISOString());
     } else {
       onChange(null);
     }
@@ -34,6 +38,8 @@ export default function Calendar({ label, value, isTime, onChange }: CustomCalen
       const combinedDate = new Date(selectedDate);
       combinedDate.setHours(time.getHours());
       combinedDate.setMinutes(time.getMinutes());
+      combinedDate.setSeconds(0);
+      combinedDate.setMilliseconds(0);
       onChange(combinedDate.toISOString());
     } else {
       onChange(null);
