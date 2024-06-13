@@ -2,7 +2,8 @@
 
 import StoreInfoForm from '@/app/(owner)/my-store/StoreInfoForm';
 import axiosInstance from '@/app/api/lib/axios';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import LoadingSpinner from '../../LoadingSpinner';
 
 export default function StoreEditPage() {
   const [initialValues, setInitialValues] = useState<any>({

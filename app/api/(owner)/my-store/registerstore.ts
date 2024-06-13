@@ -10,16 +10,9 @@ export interface ShopData {
   imageUrl: string;
 }
 
-export const registerStore = async (token: string, shopData: ShopData) => {
+export const registerStore = async (shopData: ShopData) => {
   try {
-    const response = await axiosInstance({
-      method: 'POST',
-      url: '/shops',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: shopData,
-    });
+    const response = await axiosInstance.post('/shops', shopData);
     return response.data;
   } catch (error) {
     console.error('Error creating shop:', error);

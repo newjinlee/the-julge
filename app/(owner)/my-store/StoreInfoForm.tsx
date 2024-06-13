@@ -104,9 +104,9 @@ export default function StoreInfoForm({
         }
 
         if (method === 'POST') {
-          await registerStore(token, values);
+          await registerStore(values);
         } else if (method === 'PUT') {
-          await editStore(token, shopId, values);
+          await editStore(shopId, values);
         }
       } catch (error) {
         console.error('Error:', error);
