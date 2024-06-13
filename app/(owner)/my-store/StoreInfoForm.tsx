@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFormik } from 'formik';
 import { registerStore } from '@/app/api/(owner)/my-store/registerstore';
 import { editStore } from '@/app/api/(owner)/my-store/editstore';
@@ -59,11 +59,20 @@ export default function StoreInfoForm({
   alertMessage,
   method,
   shopId,
-  initialValues,
+  initialValues = {
+    name: '',
+    category: '',
+    address1: '',
+    address2: '',
+    originalHourlyPay: 0,
+    description: '',
+    imageUrl: '',
+  },
   isEditPage,
 }: StoreInfoFormProps) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
+  const initialValuesRef = useRef(initialValues);
 
   console.log(initialValues);
 
@@ -71,10 +80,6 @@ export default function StoreInfoForm({
     const storedToken = localStorage.getItem('token');
     setToken(storedToken);
   }, []);
-
-  useEffect(() => {
-    formik.setValues(initialValues);
-  }, [initialValues]);
 
   const handleAlertOpen = () => {
     setShowAlert(true);
@@ -113,6 +118,12 @@ export default function StoreInfoForm({
     },
   });
 
+  useEffect(() => {
+    if (JSON.stringify(initialValuesRef.current) !== JSON.stringify(initialValues)) {
+      formik.setValues(initialValues);
+      initialValuesRef.current = initialValues;
+    }
+  }, [formik, initialValues]);
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="bg-gray-50 min-h-screen">
@@ -189,7 +200,7 @@ export default function StoreInfoForm({
               {buttonText}
             </button>
           </div>
-          {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} />}
+          {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} isEditPage={isEditPage} />}
         </div>
       </div>
     </form>
