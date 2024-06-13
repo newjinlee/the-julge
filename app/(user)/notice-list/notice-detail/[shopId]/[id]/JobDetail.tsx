@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchJobDetails } from '@/utils/api';
 import Image from 'next/image';
 import axios from 'axios';
-import Alert from '@/components/Alert';
+import Alert from '@/components/AlertForNotice';
 
 type Job = {
   id: string;
@@ -78,7 +78,7 @@ const JobDetail = () => {
             setMessage('로그인이 필요합니다');
             break;
           case 404:
-            setMessage('존재하지 않는 가게입니다 | 존재하지 않는 공고입니다 | 존재하지 않는 사용자입니다');
+            setMessage('존재하지 않는 가게/공고입니다');
             break;
           default:
             setMessage('지원 등록 실패');
