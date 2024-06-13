@@ -74,8 +74,6 @@ export default function StoreInfoForm({
   const [token, setToken] = useState<string | null>(null);
   const initialValuesRef = useRef(initialValues);
 
-  console.log(initialValues);
-
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     setToken(storedToken);

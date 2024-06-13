@@ -5,6 +5,7 @@ import EditImage from '@/public/EditImage.png';
 import createPresignedUrl from '@/app/api/(owner)/my-store/createPresignedUrl';
 import uploadImageToS3 from '@/utils/uploadImageToS3';
 import getImageUrlWithoutQueryParams from '@/utils/getImageUrlWithoutQueryParams';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface ImageUploadProps {
   onFileChange: (imageUrl: string) => void;
@@ -35,7 +36,9 @@ export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUp
       } catch (error) {
         console.error('File upload error:', error);
       } finally {
-        setUploading(false);
+        setTimeout(() => {
+          setUploading(false);
+        }, 2000);
       }
     }
   };
@@ -56,6 +59,7 @@ export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUp
         <div
           onClick={handleImageClick}
           className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
+          {uploading && <LoadingSpinner />}
           {imageUrl ? (
             isEditPage ? (
               <div className="relative w-full h-full">
