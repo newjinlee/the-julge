@@ -23,9 +23,10 @@ interface StoreInfoFormProps {
     description: string;
     imageUrl: string;
   };
+  isEditPage: boolean;
 }
-const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
-const addresses = [
+const Categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
+const Addresses = [
   '서울시 종로구',
   '서울시 중구',
   '서울시 용산구',
@@ -53,7 +54,14 @@ const addresses = [
   '서울시 강동구',
 ];
 
-export default function StoreInfoForm({ buttonText, alertMessage, method, shopId, initialValues }: StoreInfoFormProps) {
+export default function StoreInfoForm({
+  buttonText,
+  alertMessage,
+  method,
+  shopId,
+  initialValues,
+  isEditPage,
+}: StoreInfoFormProps) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
 
@@ -124,7 +132,7 @@ export default function StoreInfoForm({ buttonText, alertMessage, method, shopId
               <Dropdown
                 label="분류*"
                 name="category"
-                options={categories}
+                options={Categories}
                 value={formik.values.category}
                 onChange={(value: string) => formik.setFieldValue('category', value)}
               />
@@ -133,7 +141,7 @@ export default function StoreInfoForm({ buttonText, alertMessage, method, shopId
               <Dropdown
                 label="주소*"
                 name="address1"
-                options={addresses}
+                options={Addresses}
                 value={formik.values.address1}
                 onChange={(value: string) => formik.setFieldValue('address1', value)}
               />
@@ -159,6 +167,7 @@ export default function StoreInfoForm({ buttonText, alertMessage, method, shopId
               <ImageUpload
                 onFileChange={(imageUrl: string) => formik.setFieldValue('imageUrl', imageUrl)}
                 value={formik.values.imageUrl}
+                isEditPage={isEditPage}
               />
             </div>
             <div>

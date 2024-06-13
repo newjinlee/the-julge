@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import AddImage from '@/public/Group 87.svg';
-import axiosInstance from '@/app/api/lib/axios';
+import EditImage from '@/public/EditImage.png';
 import createPresignedUrl from '@/app/api/(owner)/my-store/createPresignedUrl';
 import uploadImageToS3 from '@/utils/uploadImageToS3';
 import getImageUrlWithoutQueryParams from '@/utils/getImageUrlWithoutQueryParams';
@@ -9,9 +9,10 @@ import getImageUrlWithoutQueryParams from '@/utils/getImageUrlWithoutQueryParams
 interface ImageUploadProps {
   onFileChange: (imageUrl: string) => void;
   value: string | null;
+  isEditPage: boolean;
 }
 
-export default function ImageUpload({ onFileChange, value }: ImageUploadProps) {
+export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUploadProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(value);
   const [uploading, setUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -56,7 +57,17 @@ export default function ImageUpload({ onFileChange, value }: ImageUploadProps) {
           onClick={handleImageClick}
           className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
           {imageUrl ? (
-            <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
+            isEditPage ? (
+              <div className="relative w-full h-full">
+                <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" className="z-0" />
+                <div className="absolute inset-0 bg-black opacity-50"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <Image src={EditImage} alt="이미지 변경하기" width={100} height={100} />
+                </div>
+              </div>
+            ) : (
+              <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
+            )
           ) : (
             <Image src={AddImage} alt="이미지 추가하기" layout="fill" objectFit="cover" />
           )}

@@ -52,6 +52,7 @@ export default function StoreEditPage() {
       method="PUT"
       shopId={shopId}
       initialValues={initialValues}
+      isEditPage={true}
     />
   );
 }
