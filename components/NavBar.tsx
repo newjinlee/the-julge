@@ -32,7 +32,7 @@ export function NavBar() {
       <div className="text-black w-[1000px] text-2xl flex justify-between items-center gap-4">
         <div className="flex justify-between gap-8">
           <Link className="flex items-center gap-4" href="/notice-list">
-            <Image src="/logo.png" height={100} width={100} style={{ width: '108px', height: '20px' }} alt="logo" />
+            <Image src="/logo-big.png" height={100} width={100} style={{ width: '109px', height: 'auto' }} alt="logo" />
           </Link>
           <div className="flex items-center gap-[10px] bg-gray-200 w-[450px] h-[40px] rounded-lg px-3 text-[14px]">
             <Image
