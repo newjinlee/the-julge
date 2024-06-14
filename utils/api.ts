@@ -2,21 +2,25 @@ import axios from 'axios';
 
 type Job = {
   id: string;
-  title: string;
   description: string;
   startsAt: string;
   hourlyPay: number;
   workhour: number;
+  closed: boolean;
   shop: {
-    id: string; // shop_id
-    name: string;
-    category: string;
-    address1: string;
-    address2: string;
-    description: string;
-    imageUrl: string;
-    originalHourlyPay: number;
+    item: {
+      id: string; // shop_id
+      name: string;
+      category: string;
+      address1: string;
+      address2: string;
+      description: string;
+      imageUrl: string;
+      originalHourlyPay: number;
+    };
+    href: string;
   };
+  currentUserApplication: any | null;
 };
 
 export const fetchJobDetails = async (shopId: string, jobId: string): Promise<Job> => {

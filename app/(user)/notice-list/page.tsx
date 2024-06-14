@@ -120,12 +120,11 @@ export default function Page() {
             {jobs.items.slice(0, 3).map(item => (
               <JobCard
                 key={item.item.id}
-                image={item.item.shop.item.imageUrl}
-                name={item.item.shop.item.name}
                 startsAt={item.item.startsAt}
-                time={item.item.workhour}
-                location={item.item.shop.item.address1}
-                wage={item.item.hourlyPay}
+                hourlyPay={item.item.hourlyPay}
+                workhour={item.item.workhour}
+                closed={item.item.closed}
+                shop={item.item.shop}
               />
             ))}
           </div>
@@ -142,12 +141,11 @@ export default function Page() {
             {jobs.items.map(item => (
               <JobCard
                 key={item.item.id}
-                image={item.item.shop.item.imageUrl}
-                name={item.item.shop.item.name}
                 startsAt={item.item.startsAt}
-                time={item.item.workhour}
-                location={item.item.shop.item.address1}
-                wage={item.item.hourlyPay}
+                hourlyPay={item.item.hourlyPay}
+                workhour={item.item.workhour}
+                closed={item.item.closed}
+                shop={item.item.shop}
               />
             ))}
           </div>
