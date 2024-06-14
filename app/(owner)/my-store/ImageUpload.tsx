@@ -35,9 +35,9 @@ export default function ImageUpload({ onFileChange }: ImageUploadProps) {
           onClick={handleImageClick}
           className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
           {imageUrl ? (
-            <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
+            <Image src={imageUrl} alt="Preview" style={{ objectFit: 'cover' }} />
           ) : (
-            <Image src={AddImage} alt="이미지 추가하기" layout="fill" objectFit="cover" />
+            <Image src={AddImage} alt="이미지 추가하기" style={{ objectFit: 'cover' }} />
           )}
         </div>
       </div>

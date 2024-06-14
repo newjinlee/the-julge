@@ -42,6 +42,7 @@ const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ userId }) => {
                     alt="가게사진"
                     width={597}
                     height={543}
+                    priority
                   />
                 </div>
                 <div className="flex flex-col justify-between gap-[12px] w-full lg:w-1/2">
@@ -54,7 +55,13 @@ const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ userId }) => {
                     </div>
                     <div className="flex items-center gap-4 mt-1">
                       <div className="w-5 h-5 relative">
-                        <Image src="/location-icon.png" alt="location" layout="fill" objectFit="contain" />
+                        <Image
+                          src="/location-icon.png"
+                          alt="location"
+                          fill
+                          sizes="(max-width: 20px) 100vw, 50vw"
+                          style={{ objectFit: 'contain' }}
+                        />
                       </div>
                       <p className="text-gray-600">{shopData.address1}</p>
                     </div>
