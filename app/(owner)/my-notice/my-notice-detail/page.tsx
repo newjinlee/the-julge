@@ -16,6 +16,7 @@ const MyNoticeDetail = () => {
                 alt="진주회관"
                 width={597}
                 height={543}
+                priority
               />
             </div>
             <div className="flex flex-col justify-between w-full lg:w-1/2">
@@ -26,20 +27,38 @@ const MyNoticeDetail = () => {
                   <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
                     <span>기존 시급보다 200%</span>
                     <div className="w-5 h-5 relative">
-                      <Image src="/arrow-up-icon.png" alt="arrow upper" layout="fill" objectFit="contain" />
+                      <Image
+                        src="/arrow-up-icon.png"
+                        alt="arrow upper"
+                        fill
+                        sizes="(max-width: 20px) 100vw, 50vw"
+                        style={{ objectFit: 'contain' }}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-4 mt-4">
                 <div className="w-5 h-5 relative">
-                  <Image src="/clock-icon.png" alt="clock" layout="fill" objectFit="contain" />
+                  <Image
+                    src="/clock-icon.png"
+                    alt="clock"
+                    fill
+                    sizes="(max-width: 20px) 100vw, 50vw"
+                    style={{ objectFit: 'contain' }}
+                  />
                 </div>
                 <p className="text-gray-600">2023-07-07 18:00~20:00 (2시간)</p>
               </div>
               <div className="flex items-center gap-4 mt-2">
                 <div className="w-5 h-5 relative">
-                  <Image src="/location-icon.png" alt="location" layout="fill" objectFit="contain" />
+                  <Image
+                    src="/location-icon.png"
+                    alt="location"
+                    fill
+                    sizes="(max-width: 20px) 100vw, 50vw"
+                    style={{ objectFit: 'contain' }}
+                  />
                 </div>
                 <p className="text-gray-600">서울시 중구</p>
               </div>
