@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { useFormik } from 'formik';
 import { registerStore } from '@/app/api/(owner)/my-store/registerstore';
 import { editStore } from '@/app/api/(owner)/my-store/editstore';
@@ -54,7 +54,7 @@ const Addresses = [
   '서울시 강동구',
 ];
 
-export default function StoreInfoForm({
+function StoreInfoForm({
   buttonText,
   alertMessage,
   method,
@@ -82,9 +82,11 @@ export default function StoreInfoForm({
   const handleAlertOpen = () => {
     setShowAlert(true);
   };
+
   const handleAlertClose = () => {
     setShowAlert(false);
   };
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -97,8 +99,6 @@ export default function StoreInfoForm({
     },
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        console.log('Form Values:', values);
-
         if (!token) {
           throw new Error('토큰이 없습니다');
         }
@@ -109,7 +109,7 @@ export default function StoreInfoForm({
           await editStore(shopId, values);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.error(error);
       } finally {
         setSubmitting(false);
       }
@@ -122,6 +122,7 @@ export default function StoreInfoForm({
       initialValuesRef.current = initialValues;
     }
   }, [formik, initialValues]);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="bg-gray-50 min-h-screen">
@@ -204,3 +205,5 @@ export default function StoreInfoForm({
     </form>
   );
 }
+
+export default memo(StoreInfoForm);

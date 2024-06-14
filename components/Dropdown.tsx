@@ -3,8 +3,7 @@
 import Image from 'next/image';
 import UpArrow from '@/public/dropdown-up.png';
 import DownArrow from '@/public/dropdown-down.png';
-import { useEffect, useRef, useState } from 'react';
-import { useField } from 'formik';
+import { memo, useEffect, useRef, useState } from 'react';
 
 interface DropdownProps {
   label: string;
@@ -14,9 +13,8 @@ interface DropdownProps {
   onChange: (option: string) => void;
 }
 
-export default function Dropdown({ label, options, name, value, onChange }: DropdownProps) {
+function Dropdown({ label, options, name, value, onChange }: DropdownProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectedOption, setSelectedOption] = useState<string>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
@@ -71,3 +69,5 @@ export default function Dropdown({ label, options, name, value, onChange }: Drop
     </div>
   );
 }
+
+export default memo(Dropdown);

@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface CustomTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElement> {
   label: string;
   placeholder: string;
@@ -6,7 +8,7 @@ interface CustomTextareaProps extends React.InputHTMLAttributes<HTMLTextAreaElem
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export default function CustomTextarea({ label, placeholder, name, value, onChange, ...rest }: CustomTextareaProps) {
+function CustomTextarea({ label, placeholder, name, value, onChange, ...rest }: CustomTextareaProps) {
   return (
     <div className="flex flex-col gap-2 mb-8">
       <label>{label}</label>
@@ -20,3 +22,5 @@ export default function CustomTextarea({ label, placeholder, name, value, onChan
     </div>
   );
 }
+
+export default memo(CustomTextarea);

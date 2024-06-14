@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface CustomInputProps {
   label: string;
   placeholder: string;
@@ -7,7 +9,7 @@ interface CustomInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function CustomInput({ label, placeholder, unit, name, value, onChange }: CustomInputProps) {
+function CustomInput({ label, placeholder, unit, name, value, onChange }: CustomInputProps) {
   return (
     <div className="flex flex-col gap-2 mb-8 relative">
       <label>{label}</label>
@@ -23,3 +25,5 @@ export default function CustomInput({ label, placeholder, unit, name, value, onC
     </div>
   );
 }
+
+export default memo(CustomInput);

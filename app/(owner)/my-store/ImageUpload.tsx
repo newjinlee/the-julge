@@ -63,17 +63,17 @@ export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUp
           {imageUrl ? (
             isEditPage ? (
               <div className="relative w-full h-full">
-                <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" className="z-0" />
+                <Image src={imageUrl} alt="Preview" fill className="object-contain z-0" priority />
                 <div className="absolute inset-0 bg-black opacity-50"></div>
                 <div className="absolute inset-0 flex justify-center items-center">
-                  <Image src={EditImage} alt="이미지 변경하기" width={100} height={100} />
+                  <Image src={EditImage} alt="이미지 변경하기" className="auto-size" />
                 </div>
               </div>
             ) : (
-              <Image src={imageUrl} alt="Preview" layout="fill" objectFit="cover" />
+              <Image src={imageUrl} alt="Preview" fill className="object-contain" />
             )
           ) : (
-            <Image src={AddImage} alt="이미지 추가하기" layout="fill" objectFit="cover" />
+            <Image src={AddImage} alt="이미지 추가하기" fill className="object-contain" />
           )}
         </div>
       </div>

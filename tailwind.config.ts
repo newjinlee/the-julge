@@ -16,6 +16,7 @@ const config: tailwindConfig.Config = {
         spoqa: ['var(--font-spoqa)'],
       },
       colors: {
+        'The-julge-primary': '#EA3C12',
         'The-julge-black': '#111322',
         'The-julge-gray-50': '#7D7986',
         'The-julge-gray-40': '#A4A1AA',
