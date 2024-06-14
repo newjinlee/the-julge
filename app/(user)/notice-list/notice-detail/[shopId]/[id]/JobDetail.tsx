@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { fetchJobDetails } from '@/utils/api';
 import Image from 'next/image';
-import axios from 'axios';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
+import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
 
 type Job = {
   id: string;
@@ -67,27 +66,14 @@ const JobDetail = () => {
     }
 
     try {
-      const userProfileResponse = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const userProfile = await fetchUserProfile(userId, token);
 
-      const userProfile = userProfileResponse.data.item;
       if (!userProfile.name || !userProfile.phone || !userProfile.address || !userProfile.bio) {
         setMessage('내 프로필을 먼저 등록해 주세요');
         return;
       }
 
-      const response = await axios.post(
-        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await applyJob(shopId!, noticeId!, token);
 
       if (response.status === 201) {
         setMessage('지원 등록 성공');
@@ -134,17 +120,7 @@ const JobDetail = () => {
     }
 
     try {
-      const response = await axios.put(
-        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications/${userId}`,
-        {
-          status: 'canceled',
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await cancelJobApplication(shopId!, noticeId!, userId, token);
 
       if (response.status === 200) {
         setMessage('지원 취소 성공');
