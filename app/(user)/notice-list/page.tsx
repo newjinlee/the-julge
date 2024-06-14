@@ -91,9 +91,10 @@ export default function Page() {
   };
 
   if (jobs) {
-    jobs.items.forEach(item => {
-      console.log(item.item);
-    });
+    console.log(jobs);
+    // jobs.items.forEach(item => {
+    //   console.log(item.item);
+    // });
   }
 
   const getDisplayedPages = () => {
@@ -120,6 +121,7 @@ export default function Page() {
             {jobs.items.slice(0, 3).map(item => (
               <JobCard
                 key={item.item.id}
+                id={item.item.id}
                 startsAt={item.item.startsAt}
                 hourlyPay={item.item.hourlyPay}
                 workhour={item.item.workhour}
@@ -141,6 +143,7 @@ export default function Page() {
             {jobs.items.map(item => (
               <JobCard
                 key={item.item.id}
+                id={item.item.id}
                 startsAt={item.item.startsAt}
                 hourlyPay={item.item.hourlyPay}
                 workhour={item.item.workhour}
@@ -177,7 +180,7 @@ export default function Page() {
             <button
               className={`px-[12px] py-[8px] ${
                 currentPage >= totalPages
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'text-gray-400 cursor-not-allowed'
                   : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)]'
               }`}
               onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
