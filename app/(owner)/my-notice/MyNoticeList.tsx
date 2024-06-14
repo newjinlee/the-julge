@@ -3,20 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
-interface ShopData {
-  id: string;
-  name: string;
-  category: string;
-  address1: string;
-  address2: string;
-  description: string;
-  imageUrl: string;
-  originalHourlyPay: number;
-}
+import { ShopData, NoticeData } from '@/types';
 
 const MyNoticeList = () => {
   const [shopData, setShopData] = useState<ShopData | null>(null);
+  const [noticeData, setNoticeData] = useState<NoticeData[]>([]);
+  const [offset, setOffset] = useState(0);
+  const limit = 6;
 
   const router = useRouter();
 
@@ -25,9 +18,17 @@ const MyNoticeList = () => {
       try {
         const userId = localStorage.getItem('userId');
         if (userId) {
+          // 가게 정보
           const response = await fetch(`/api/users/${userId}`);
           const userData = await response.json();
           setShopData(userData.item.shop.item);
+          console.log(shopData);
+
+          // 가게 공고 리스트
+          const shopId = userData.item.shop.item.id;
+          const noticeResponse = await fetch(`/api/shops/${shopId}/notices?offset=${offset}&limit=${limit}`);
+          const noticeData = await noticeResponse.json();
+          console.log(noticeData);
         } else {
           console.log('no token');
         }
@@ -37,13 +38,18 @@ const MyNoticeList = () => {
     };
 
     fetchUserInfo();
-  }, [router]);
+  }, [router, offset]);
+
+  // 예시로 무한 스크롤을 구현하는 방법
+  const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+    setOffset(prevOffset => prevOffset + limit); // 스크롤이 끝에 도달하면 offset을 증가시킵니다.
+  };
 
   useEffect(() => {
-    if (shopData) {
-      console.log(shopData);
-    }
-  }, [shopData]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
