@@ -37,7 +37,7 @@ export async function GET(request: Request, { params }: { params: { shopId: stri
 
 export async function POST(request: Request, { params }: { params: { shopId: string } }): Promise<NextResponse> {
   const { shopId } = params;
-  let noticeData: Omit<NoticeData, 'id' | 'closed'>;
+  let noticeData: Omit<NoticeData['item'], 'id' | 'closed'>;
 
   const token = request.headers.get('Authorization')?.split(' ')[1];
 
@@ -50,6 +50,11 @@ export async function POST(request: Request, { params }: { params: { shopId: str
   } catch (error) {
     console.error('Error parsing request body:', error);
     return NextResponse.json({ error: '요청 양식 오류' }, { status: 400 });
+  }
+
+  // noticeData와 item이 존재하는지 확인
+  if (!noticeData) {
+    return NextResponse.json({ error: '요청 데이터가 올바르지 않습니다' }, { status: 400 });
   }
 
   const { hourlyPay, startsAt, workhour, description } = noticeData;
@@ -67,6 +72,7 @@ export async function POST(request: Request, { params }: { params: { shopId: str
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        timeout: 5000,
       },
     );
 
