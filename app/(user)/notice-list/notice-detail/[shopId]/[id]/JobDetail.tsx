@@ -51,23 +51,39 @@ const JobDetail = () => {
 
   const handleApply = async () => {
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
 
-    if (!token) {
+    if (!token || !userId) {
       setMessage('로그인이 필요합니다');
       return;
     }
 
     try {
-      await axios.post(
-        `https://bootcamp-api.codeit.kr/api/0-1/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
+      const userProfileResponse = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userProfile = userProfileResponse.data.item;
+      if (!userProfile.name || !userProfile.phone || !userProfile.address || !userProfile.bio) {
+        setMessage('내 프로필을 먼저 등록해 주세요');
+        return;
+      }
+
+      const response = await axios.post(
+        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
         {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
-      setMessage('지원 등록 성공');
+
+      if (response.status === 201) {
+        setMessage('지원 등록 성공');
+      }
     } catch (error: any) {
       if (error.response) {
         switch (error.response.status) {
@@ -78,7 +94,16 @@ const JobDetail = () => {
             setMessage('로그인이 필요합니다');
             break;
           case 404:
-            setMessage('존재하지 않는 가게/공고입니다');
+            const errorMessage = error.response.data.message;
+            if (errorMessage.includes('가게')) {
+              setMessage('존재하지 않는 가게입니다');
+            } else if (errorMessage.includes('공고')) {
+              setMessage('존재하지 않는 공고입니다');
+            } else if (errorMessage.includes('사용자')) {
+              setMessage('존재하지 않는 사용자입니다');
+            } else {
+              setMessage('알 수 없는 오류가 발생했습니다');
+            }
             break;
           default:
             setMessage('지원 등록 실패');
@@ -95,8 +120,8 @@ const JobDetail = () => {
   };
 
   const handleSetTestData = () => {
-    const testShopId = '4490151c-5217-4157-b072-9c37b05bed47'; // 테스트용 임의의 가게 ID
-    const testNoticeId = '99996477-82db-4bda-aae1-4044f11d9a8b'; // 테스트용 임의의 공고 ID
+    const testShopId = '07a6a12c-7ca6-4dc2-9342-b7b6209bd9b5'; // 테스트용 임의의 가게 ID
+    const testNoticeId = '98e8edd5-44be-4334-b53a-20c2eac7657a'; // 테스트용 임의의 공고 ID
     localStorage.setItem('shop_id', testShopId);
     localStorage.setItem('notice_id', testNoticeId);
     setShopId(testShopId);
