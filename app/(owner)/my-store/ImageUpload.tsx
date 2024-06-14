@@ -61,6 +61,7 @@ export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUp
           className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
           {uploading && <LoadingSpinner />}
           {imageUrl ? (
+
             isEditPage ? (
               <div className="relative w-full h-full">
                 <Image src={imageUrl} alt="Preview" fill className="object-contain z-0" priority />
@@ -74,6 +75,7 @@ export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUp
             )
           ) : (
             <Image src={AddImage} alt="이미지 추가하기" fill className="object-contain" />
+
           )}
         </div>
       </div>

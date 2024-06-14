@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchJobDetails } from '@/utils/api';
 import Image from 'next/image';
+import axios from 'axios';
+import Alert from '@/components/AlertForNotice';
 
 type Job = {
   id: string;
@@ -28,46 +30,98 @@ type Job = {
 };
 
 const JobDetail = () => {
+  const [message, setMessage] = useState('');
+  const [shopId, setShopId] = useState<string | null>(null);
+  const [noticeId, setNoticeId] = useState<string | null>(null);
   const [job, setJob] = useState<Job | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadJobDetails = async () => {
-      try {
-        const urlParts = window.location.pathname.split('/');
-        const shopId = urlParts[urlParts.length - 2];
-        const id = urlParts[urlParts.length - 1];
+    const storedShopId = localStorage.getItem('shop_id');
+    const storedNoticeId = localStorage.getItem('notice_id');
 
-        if (shopId && id) {
-          console.log(`Fetching job details for shopId: ${shopId}, id: ${id}`);
-          const jobDetails = await fetchJobDetails(shopId, id);
-          console.log('API response:', jobDetails);
-          setJob(jobDetails);
-          setError(null);
-        } else {
-          setError('Invalid job ID or shop ID');
-        }
-      } catch (error: any) {
-        console.error('Failed to load job details', error);
-        setError('Failed to load job details');
-      }
-    };
+    setShopId(storedShopId);
+    setNoticeId(storedNoticeId);
 
-    loadJobDetails();
+    if (storedShopId && storedNoticeId) {
+      fetchJobDetails(storedShopId, storedNoticeId)
+        .then(data => setJob(data))
+        .catch(error => console.error(error));
+    }
   }, []);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const handleApply = async () => {
+    const token = localStorage.getItem('token');
 
-  if (!job) {
-    return <div>Loading...</div>;
-  }
+    if (!token) {
+      setMessage('로그인이 필요합니다');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `https://bootcamp-api.codeit.kr/api/0-1/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      setMessage('지원 등록 성공');
+    } catch (error: any) {
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            setMessage('공고가 마감되었습니다');
+            break;
+          case 401:
+            setMessage('로그인이 필요합니다');
+            break;
+          case 404:
+            setMessage('존재하지 않는 가게/공고입니다');
+            break;
+          default:
+            setMessage('지원 등록 실패');
+        }
+      } else {
+        setMessage('지원 등록 실패');
+      }
+      console.error(error);
+    }
+  };
+
+  const handleCloseAlert = () => {
+    setMessage('');
+  };
+
+  const handleSetTestData = () => {
+    const testShopId = '4490151c-5217-4157-b072-9c37b05bed47'; // 테스트용 임의의 가게 ID
+    const testNoticeId = '99996477-82db-4bda-aae1-4044f11d9a8b'; // 테스트용 임의의 공고 ID
+    localStorage.setItem('shop_id', testShopId);
+    localStorage.setItem('notice_id', testNoticeId);
+    setShopId(testShopId);
+    setNoticeId(testNoticeId);
+
+    fetchJobDetails(testShopId, testNoticeId)
+      .then(data => setJob(data))
+      .catch(error => console.error(error));
+  };
+
+  if (!job)
+    return (
+      <div>
+        <p>Loading...</p>
+        <button onClick={handleSetTestData} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
+          Load Test Data
+        </button>
+      </div>
+    );
 
   const shop = job.shop.item;
 
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
+      {message && <Alert message={message} onClose={handleCloseAlert} />}
       <div className="w-full flex flex-col items-start gap-8">
         <div className="w-full">
           <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
@@ -135,7 +189,10 @@ const JobDetail = () => {
               </div>
               <p className="mt-4 text-gray-900">{shop.description}</p>
               <div className="mt-6">
-                <button type="button" className="w-full bg-orange-600 text-white py-3 rounded-md font-bold">
+                <button
+                  type="button"
+                  className="w-full bg-orange-600 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
+                  onClick={handleApply}>
                   신청하기
                 </button>
               </div>
