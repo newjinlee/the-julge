@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { JobCard } from '@/components/JobCard';
 import Link from 'next/link';
+import { useSearch } from '@/context/SearchContext';
 
 interface JobsResponse {
   offset: number;
@@ -114,6 +115,11 @@ export default function Page() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('마감임박순');
   const [user, setUser] = useState<UserResponse | null>(null);
+  const { searchShopValue } = useSearch();
+
+  if (searchShopValue) {
+    console.log(searchShopValue);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -145,10 +151,6 @@ export default function Page() {
     fetchUserData();
   }, []);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   const sortJobs = (items, option) => {
     switch (option) {
       case '시급 많은 순':
@@ -178,6 +180,10 @@ export default function Page() {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleOptionSelect = (option: string) => {
@@ -258,19 +264,40 @@ export default function Page() {
         </div>
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {jobsForCurrentPage.map(item => (
-              <Link href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
-                <JobCard
-                  key={item.item.id}
-                  id={item.item.id}
-                  startsAt={item.item.startsAt}
-                  hourlyPay={item.item.hourlyPay}
-                  workhour={item.item.workhour}
-                  closed={item.item.closed}
-                  shop={item.item.shop}
-                />
-              </Link>
-            ))}
+            {searchShopValue
+              ? sortedJobs
+                  .filter(item => item.item.shop.item.name.toLowerCase().includes(searchShopValue.toLowerCase()))
+                  .slice((currentPage - 1) * 6, currentPage * 6)
+                  .map(item => (
+                    <Link
+                      href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`}
+                      key={item.item.id}>
+                      <JobCard
+                        key={item.item.id}
+                        id={item.item.id}
+                        startsAt={item.item.startsAt}
+                        hourlyPay={item.item.hourlyPay}
+                        workhour={item.item.workhour}
+                        closed={item.item.closed}
+                        shop={item.item.shop}
+                      />
+                    </Link>
+                  ))
+              : jobsForCurrentPage.map(item => (
+                  <Link
+                    href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`}
+                    key={item.item.id}>
+                    <JobCard
+                      key={item.item.id}
+                      id={item.item.id}
+                      startsAt={item.item.startsAt}
+                      hourlyPay={item.item.hourlyPay}
+                      workhour={item.item.workhour}
+                      closed={item.item.closed}
+                      shop={item.item.shop}
+                    />
+                  </Link>
+                ))}
           </div>
         )}
         <div className="flex w-100% px-3 justify-center items-center">

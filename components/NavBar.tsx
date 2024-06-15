@@ -1,20 +1,32 @@
 'use client';
-import { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSearch } from '@/context/SearchContext';
 
 export function NavBar() {
   // State to hold the user type
   const [userType, setUserType] = useState('');
   const router = useRouter();
-  const [inputValue, setInputValue] = useState<string>('');
+  const { searchShopValue, setSearchShopValue } = useSearch();
+  const [inputValue, setInputValue] = useState('');
 
   // Effect to update userType based on local storage value
   useEffect(() => {
     const type = localStorage.getItem('userType');
     setUserType(type || '');
   }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setSearchShopValue(inputValue);
+    }
+  };
 
   const handleLogOut = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -27,26 +39,6 @@ export function NavBar() {
     // Redirect the user to the login page
     router.push('/login');
   };
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setInputValue(value);
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      if (inputValue.trim() === '') {
-        localStorage.removeItem('searchShop');
-      } else {
-        localStorage.setItem('searchShop', inputValue);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const searchShopValue = localStorage.getItem('searchShop');
-    localStorage.removeItem('searchShop');
-  }, []);
 
   return (
     <div className="w-full h-[70px] flex items-center justify-center px-10">
@@ -76,7 +68,7 @@ export function NavBar() {
               className="bg-gray-200 w-full"
               value={inputValue}
               onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleSearch}
             />
           </div>
         </div>
