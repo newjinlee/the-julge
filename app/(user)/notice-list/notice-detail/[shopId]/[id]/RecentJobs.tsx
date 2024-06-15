@@ -78,6 +78,8 @@ const RecentJobs = () => {
   }, [pathname, router]);
 
   const handleClick = (job: Job) => {
+    localStorage.setItem('notice_id', job.id);
+    localStorage.setItem('shop_id', job.shop.item.id);
     router.push(`/notice-list/notice-detail/${job.shop.item.id}/${job.id}`);
   };
 
