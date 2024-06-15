@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import JobCardForRecentSearch from './JobCardForRecentSearch';
+import JobCardForRecentSearch from '@/components/JobCardForRecentSearch';
 import { getRecentJobs, saveRecentJob } from '@/utils/localStorageHelper';
 import { fetchJobDetails } from '@/utils/api';
 import { Job } from '@/types/job'

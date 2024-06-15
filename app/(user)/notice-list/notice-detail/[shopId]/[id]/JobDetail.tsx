@@ -114,19 +114,6 @@ const JobDetail = () => {
     setMessage('');
   };
 
-  const handleSetTestData = () => {
-    const testShopId = '07a6a12c-7ca6-4dc2-9342-b7b6209bd9b5'; // 테스트용 임의의 가게 ID
-    const testNoticeId = '98e8edd5-44be-4334-b53a-20c2eac7657a'; // 테스트용 임의의 공고 ID
-    localStorage.setItem('shop_id', testShopId);
-    localStorage.setItem('notice_id', testNoticeId);
-    setShopId(testShopId);
-    setNoticeId(testNoticeId);
-
-    fetchJobDetails(testShopId, testNoticeId)
-      .then(data => setJob(data))
-      .catch(error => console.error(error));
-  };
-
   if (!job)
     return (
       <div>
