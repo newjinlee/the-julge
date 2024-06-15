@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShopData, NoticeData } from '@/types';
+import { ShopData, NoticeDetailData } from '@/types';
 import { JobCard } from '@/components/JobCard';
 
 interface MyNoticeListProps {
@@ -10,7 +10,7 @@ interface MyNoticeListProps {
 }
 
 const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
-  const [noticeList, setNoticeList] = useState<NoticeData[]>([]);
+  const [noticeList, setNoticeList] = useState<NoticeDetailData[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -35,7 +35,7 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
       setNoticeList(prev => {
         // 중복 데이터 제거
         const newNotices = noticeData.items.filter(
-          (newNotice: NoticeData) => !prev.some(existingNotice => existingNotice.item.id === newNotice.item.id),
+          (newNotice: NoticeDetailData) => !prev.some(existingNotice => existingNotice.item.id === newNotice.item.id),
         );
         return [...prev, ...newNotices];
       });
@@ -53,7 +53,7 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
     }
   }, [offset, limit, shopData.item.id]);
 
-  const handleClick = (notice: NoticeData) => {
+  const handleClick = (notice: NoticeDetailData) => {
     console.log(notice);
   };
 
@@ -77,9 +77,16 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
 
   return (
     <div className="w-full">
-      <h1 className="text-gray-900 text-2xl font-bold mb-6">내가 등록한 공고</h1>
+      <h1 className="text-gray-900 text-2xl font-bold mb-[32px]">내가 등록한 공고</h1>
       {noticeList.length === 0 ? (
-        <p>공고를 등록해보세요.</p>
+        <div className="flex flex-col items-center gap-[24px] py-[60px] border border-The-julge-gray-20 rounded-md">
+          <p>공고를 등록해보세요.</p>
+          <button
+            className="w-[346px] h-[47px] bg-The-julge-primary text-white rounded-md font-bold"
+            onClick={() => router.push('/my-notice/my-notice-register')}>
+            공고 등록하기
+          </button>
+        </div>
       ) : (
         <div className="flex flex-wrap gap-3.5">
           {noticeList.map(notice => (
