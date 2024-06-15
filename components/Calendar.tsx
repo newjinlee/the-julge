@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -10,9 +10,16 @@ interface CustomCalendarProps {
 }
 
 export default function Calendar({ label, value, isTime = false, onChange }: CustomCalendarProps) {
-  const initialDate = value ? new Date(value) : null;
-  const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate);
-  const [selectedTime, setSelectedTime] = useState<Date | null>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (value) {
+      const date = new Date(value);
+      setSelectedDate(date);
+      setSelectedTime(date);
+    }
+  }, [value]);
 
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date);
