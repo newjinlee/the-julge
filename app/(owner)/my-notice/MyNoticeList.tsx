@@ -99,7 +99,7 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
                 closed={notice.item.closed}
                 shop={shopData}
                 currentUserApplication="currentUserApplication"
-                onClick={() => handleClick(notice)}
+                onClick={() => router.push(`/my-notice/my-notice-detail/${notice.item.id}`)}
               />
             </div>
           ))}
