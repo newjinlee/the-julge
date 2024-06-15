@@ -4,14 +4,18 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 import useShopData from '@/app/hooks/useShopData';
-import { NoticeDetailData, ShopData } from '@/types';
-import useNoticeDetail from '@/app/hooks/useNoticeDetail';
+import { NoticeFullDetailData, Applications } from '@/types';
+import useNoticeFullDetail from '@/app/hooks/useNoticeFullDetail';
 
 const MyNoticeDetail = () => {
   const router = useRouter();
   const { noticeId } = useParams();
 
-  const [noticeDetail, setNoticeDetail] = useState<NoticeDetailData>();
+  const [noticeFullDetail, setNoticeFullDetail] = useState<NoticeFullDetailData>();
+  const [applications, setApplications] = useState<Applications>();
+
+  const [offset, setOffset] = useState(0);
+  const limit = 5;
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -23,9 +27,9 @@ const MyNoticeDetail = () => {
     const fetchNoticeDetail = async () => {
       try {
         const shop = await useShopData(userId);
-
-        const detail = await useNoticeDetail(shop.item.id, noticeId);
-        setNoticeDetail(detail);
+        const detail: NoticeFullDetailData = await useNoticeFullDetail(shop.item.id, noticeId, offset, limit);
+        setNoticeFullDetail(detail);
+        setApplications(detail.item.currentUserApplication);
       } catch (error) {
         console.error(error);
       }
@@ -35,7 +39,7 @@ const MyNoticeDetail = () => {
   }, [noticeId]);
 
   const handleClick = () => {
-    console.log(noticeDetail);
+    console.log(applications);
   };
 
   const formatNumber = (num: number) => {
@@ -64,18 +68,18 @@ const MyNoticeDetail = () => {
 
   return (
     <>
-      {noticeDetail && (
+      {noticeFullDetail && (
         <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
           <button onClick={handleClick}>test</button>
           <div className="w-full flex flex-col items-start gap-8 mb-[60px]">
             <div className="w-full">
-              <h2 className="text-orange-600 text-base font-bold">{noticeDetail.item.shop.item.category}</h2>
-              <h1 className="text-gray-900 text-2xl font-bold mb-6">{noticeDetail.item.shop.item.name}</h1>
+              <h2 className="text-orange-600 text-base font-bold">{noticeFullDetail.item.shop.item.category}</h2>
+              <h1 className="text-gray-900 text-2xl font-bold mb-6">{noticeFullDetail.item.shop.item.name}</h1>
               <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
                 <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
                   <Image
                     className="w-full h-full object-cover"
-                    src={noticeDetail.item.shop.item.imageUrl}
+                    src={noticeFullDetail.item.shop.item.imageUrl}
                     alt="가게사진"
                     width={597}
                     height={543}
@@ -87,29 +91,29 @@ const MyNoticeDetail = () => {
                     <h3 className="text-orange-600 text-base font-bold">시급</h3>
                     <div className="flex items-center gap-4 mt-2">
                       <span className="text-2xl font-bold text-gray-900">
-                        {formatNumber(noticeDetail.item.hourlyPay)}원
+                        {formatNumber(noticeFullDetail.item.hourlyPay)}원
                       </span>
-                      <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
-                        {noticeDetail.item.hourlyPay > noticeDetail.item.shop.item.originalHourlyPay && (
+                      {noticeFullDetail.item.hourlyPay > noticeFullDetail.item.shop.item.originalHourlyPay && (
+                        <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
                           <span>
                             기존 시급보다{' '}
                             {(
-                              (noticeDetail.item.hourlyPay / noticeDetail.item.shop.item.originalHourlyPay) *
+                              (noticeFullDetail.item.hourlyPay / noticeFullDetail.item.shop.item.originalHourlyPay) *
                               100
                             ).toFixed(0)}
                             %
                           </span>
-                        )}
-                        <div className="w-5 h-5 relative">
-                          <Image
-                            src="/arrow-up-icon.png"
-                            alt="arrow upper"
-                            fill
-                            sizes="(max-width: 20px) 100vw, 50vw"
-                            style={{ objectFit: 'contain' }}
-                          />
+                          <div className="w-5 h-5 relative">
+                            <Image
+                              src="/arrow-up-icon.png"
+                              alt="arrow upper"
+                              fill
+                              sizes="(max-width: 20px) 100vw, 50vw"
+                              style={{ objectFit: 'contain' }}
+                            />
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-4 mt-4">
@@ -123,8 +127,8 @@ const MyNoticeDetail = () => {
                       />
                     </div>
                     <p className="text-gray-600">
-                      {convertToKoreanTime(noticeDetail.item.startsAt, noticeDetail.item.workhour)} (
-                      {noticeDetail.item.workhour}시간)
+                      {convertToKoreanTime(noticeFullDetail.item.startsAt, noticeFullDetail.item.workhour)} (
+                      {noticeFullDetail.item.workhour}시간)
                     </p>
                   </div>
                   <div className="flex items-center gap-4 mt-2">
@@ -137,13 +141,14 @@ const MyNoticeDetail = () => {
                         style={{ objectFit: 'contain' }}
                       />
                     </div>
-                    <p className="text-gray-600">{noticeDetail.item.shop.item.address1}</p>
+                    <p className="text-gray-600">{noticeFullDetail.item.shop.item.address1}</p>
                   </div>
-                  <p className="mt-4 text-gray-900">{noticeDetail.item.shop.item.description}</p>
+                  <p className="mt-4 text-gray-900">{noticeFullDetail.item.shop.item.description}</p>
                   <div className="mt-6">
                     <button
                       type="button"
-                      className="w-full bg-white text-The-julge-primary border border-The-julge-primary py-3 rounded-md font-bold">
+                      className="w-full bg-white text-The-julge-primary border border-The-julge-primary py-3 rounded-md font-bold"
+                      onClick={() => router.push(`/my-notice/my-notice-edit/${noticeId}`)}>
                       공고 편집하기
                     </button>
                   </div>
@@ -152,7 +157,7 @@ const MyNoticeDetail = () => {
             </div>
             <div className="w-full p-8 bg-zinc-100 rounded-xl flex-col justify-start items-start gap-8 inline-flex">
               <h3 className="text-gray-900 text-lg font-bold">공고 설명</h3>
-              <p className="text-gray-600 mt-2">{noticeDetail.item.description}</p>
+              <p className="text-gray-600 mt-2">{noticeFullDetail.item.description}</p>
             </div>
           </div>
           <div className="flex flex-col gap-[32px] mt-[60px]">
@@ -167,14 +172,26 @@ const MyNoticeDetail = () => {
                     <th>상태</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td className="px-[12px] py-[20px]">전유민</td>
-                    <td>어쩌구저쩌구</td>
-                    <td>010-0000-0000</td>
-                    <td>거절</td>
-                  </tr>
-                </tbody>
+                {applications && applications.count > 0 ? (
+                  <tbody>
+                    {applications.items.map((application: any, index: number) => (
+                      <tr key={index}>
+                        <td className="px-[12px] py-[20px]">{application.item.user.item.name}</td>
+                        <td>{application.item.user.item.bio}</td>
+                        <td>{application.item.user.item.phone}</td>
+                        <td>{application.item.status}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <tbody>
+                    <tr>
+                      <td colSpan={4} className="px-[12px] py-[20px] text-center">
+                        신청자가 없습니다.
+                      </td>
+                    </tr>
+                  </tbody>
+                )}
               </table>
             </div>
           </div>

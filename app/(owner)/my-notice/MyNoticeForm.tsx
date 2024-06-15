@@ -135,6 +135,14 @@ const MyNoticeForm = () => {
     }
   };
 
+  const handelRedirect = () => {
+    if (noticeId) {
+      router.push(`/my-notice/my-notice-detail/${noticeId}`);
+    } else {
+      router.push('/my-store');
+    }
+  };
+
   return (
     <div className="relative px-[12px] py-[60px] max-w-[964px] h-full mx-auto">
       <h1 className="font-bold text-2xl mb-7">공고등록</h1>
@@ -177,7 +185,7 @@ const MyNoticeForm = () => {
           <button
             type="button"
             className="flex justify-center w-[312px] py-[14px] bg-The-julge-gray-40 text-white"
-            onClick={() => router.push('/my-notice')}>
+            onClick={handelRedirect}>
             돌아가기
           </button>
           <button type="submit" className="flex justify-center w-[312px] py-[14px] bg-The-julge-red-40 text-white">
