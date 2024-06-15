@@ -14,6 +14,7 @@ const JobDetail = () => {
   const [job, setJob] = useState<Job | null>(null);
   const [isApplied, setIsApplied] = useState(false);
   const [showCancelAlert, setShowCancelAlert] = useState(false);
+  const [isPastJob, setIsPastJob] = useState(false);
 
   useEffect(() => {
     const storedShopId = localStorage.getItem('shop_id');
@@ -29,6 +30,9 @@ const JobDetail = () => {
           if (data.currentUserApplication) {
             setIsApplied(true);
           }
+          const currentTime = new Date();
+          const jobStartTime = new Date(data.startsAt);
+          setIsPastJob(currentTime > jobStartTime);
         })
         .catch(error => console.error(error));
     }
@@ -141,18 +145,25 @@ const JobDetail = () => {
           <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
           <h1 className="text-gray-900 text-2xl font-bold mb-6">{shop.name}</h1>
           <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
-            <Image
-              className={`w-full h-full object-cover ${job.closed ? 'opacity-50' : ''}`}
-              src={shop.imageUrl}
-              alt={shop.name}
-              width={597}
-              height={543}
-            />
-            {job.closed && (
-              <div className="absolute inset-0 flex justify-center items-center">
-                <span className="text-white text-2xl font-bold">마감 완료</span>
-              </div>
-            )}
+            <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden relative">
+              <Image
+                className={`w-full h-full object-cover ${isPastJob || job.closed ? 'opacity-50' : ''}`}
+                src={shop.imageUrl}
+                alt={shop.name}
+                width={597}
+                height={543}
+              />
+              {job.closed && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <span className="text-white text-2xl font-bold">마감 완료</span>
+                </div>
+              )}
+              {isPastJob && !job.closed && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <span className="text-white text-2xl font-bold">지난 공고</span>
+                </div>
+              )}
+            </div>
             <div className="flex flex-col justify-between w-full lg:w-1/2">
               <div>
                 <h3 className="text-orange-600 text-base font-bold">시급</h3>
@@ -215,7 +226,7 @@ const JobDetail = () => {
                       취소하기
                     </div>
                   </button>
-                ) : job.closed ? (
+                ) : job.closed || isPastJob ? (
                   <button
                     type="button"
                     className="w-full bg-gray-400 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo'] cursor-not-allowed"
