@@ -3,12 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ShopData } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface MyStoreInfoProps {
   shopData: ShopData;
 }
 
 const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ shopData }) => {
+  const router = useRouter();
+
   return (
     <div className="w-full">
       {shopData ? (
@@ -48,11 +51,16 @@ const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ shopData }) => {
                 <p className="mt-4 text-gray-900">{shopData.item.description}</p>
               </div>
               <div className="flex flex-row gap-[8px]">
-                <button type="button" className="w-full bg-white text-The-julge-primary py-3 rounded-md font-bold ">
+                <button
+                  type="button"
+                  className="w-full bg-white text-The-julge-primary py-3 rounded-md font-bold border border-The-julge-primary">
                   편집하기
                 </button>
-                <button type="button" className="w-full bg-The-julge-primary text-white py-3 rounded-md font-bold">
-                  신청하기
+                <button
+                  type="button"
+                  className="w-full bg-The-julge-primary text-white py-3 rounded-md font-bold"
+                  onClick={() => router.push('/my-notice/my-notice-register')}>
+                  공고 등록하기
                 </button>
               </div>
             </div>

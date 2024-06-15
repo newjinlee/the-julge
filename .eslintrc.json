@@ -11,21 +11,18 @@
   },
   "globals": { "_": true },
   "plugins": ["import", "html"],
-  "extends": [
-    "airbnb-base",
-    "prettier",
-    "react-app",
-    "react-app/jest",
-    "next",
-    "next/core-web-vitals"
-  ],
+  "extends": ["airbnb-base", "prettier", "react-app", "react-app/jest", "next", "next/core-web-vitals"],
   "rules": {
-    "import/extensions": ["error", "ignorePackages", {
-      "js": "never",
-      "jsx": "never",
-      "ts": "never",
-      "tsx": "never"
-    }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
     "import/no-unresolved": "off",
     "import/first": "off",
     "import/prefer-default-export": "off",
@@ -58,7 +55,7 @@
     "max-len": [
       "error",
       {
-        "code": 120,
+        "code": 150,
         "ignoreComments": true,
         "ignoreStrings": true,
         "ignoreTemplateLiterals": true

@@ -13,7 +13,6 @@ export async function PUT(request: Request, context: { params: { shopId: string 
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  console.log(shopData);
   const { name, category, address1, address2, description, imageUrl, originalHourlyPay } = shopData.item;
   const token = request.headers.get('Authorization')?.split(' ')[1];
 

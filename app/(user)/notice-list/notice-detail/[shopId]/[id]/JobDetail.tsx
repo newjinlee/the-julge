@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { fetchJobDetails } from '@/utils/api';
 import Image from 'next/image';
-import axios from 'axios';
-import Alert from '@/components/AlertForNotice';
+import Alert from '@/components/AlertForApply';
+import AlertForApplyCancel from '@/components/AlertForApplyCancel';
+import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
 
 type Job = {
   id: string;
@@ -34,6 +34,8 @@ const JobDetail = () => {
   const [shopId, setShopId] = useState<string | null>(null);
   const [noticeId, setNoticeId] = useState<string | null>(null);
   const [job, setJob] = useState<Job | null>(null);
+  const [isApplied, setIsApplied] = useState(false);
+  const [showCancelAlert, setShowCancelAlert] = useState(false);
 
   useEffect(() => {
     const storedShopId = localStorage.getItem('shop_id');
@@ -44,30 +46,39 @@ const JobDetail = () => {
 
     if (storedShopId && storedNoticeId) {
       fetchJobDetails(storedShopId, storedNoticeId)
-        .then(data => setJob(data))
+        .then(data => {
+          setJob(data);
+          if (data.currentUserApplication) {
+            setIsApplied(true);
+          }
+        })
         .catch(error => console.error(error));
     }
   }, []);
 
   const handleApply = async () => {
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
 
-    if (!token) {
+    if (!token || !userId) {
       setMessage('로그인이 필요합니다');
       return;
     }
 
     try {
-      await axios.post(
-        `https://bootcamp-api.codeit.kr/api/0-1/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      setMessage('지원 등록 성공');
+      const userProfile = await fetchUserProfile(userId, token);
+
+      if (!userProfile.name || !userProfile.phone || !userProfile.address || !userProfile.bio) {
+        setMessage('내 프로필을 먼저 등록해 주세요');
+        return;
+      }
+
+      const response = await applyJob(shopId!, noticeId!, token);
+
+      if (response.status === 201) {
+        setMessage('지원 등록 성공');
+        setIsApplied(true);
+      }
     } catch (error: any) {
       if (error.response) {
         switch (error.response.status) {
@@ -78,7 +89,16 @@ const JobDetail = () => {
             setMessage('로그인이 필요합니다');
             break;
           case 404:
-            setMessage('존재하지 않는 가게/공고입니다');
+            const errorMessage = error.response.data.message;
+            if (errorMessage.includes('가게')) {
+              setMessage('존재하지 않는 가게입니다');
+            } else if (errorMessage.includes('공고')) {
+              setMessage('존재하지 않는 공고입니다');
+            } else if (errorMessage.includes('사용자')) {
+              setMessage('존재하지 않는 사용자입니다');
+            } else {
+              setMessage('알 수 없는 오류가 발생했습니다');
+            }
             break;
           default:
             setMessage('지원 등록 실패');
@@ -90,13 +110,35 @@ const JobDetail = () => {
     }
   };
 
+  const handleCancel = async () => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      setMessage('로그인이 필요합니다');
+      return;
+    }
+
+    try {
+      const response = await cancelJobApplication(shopId!, noticeId!, userId, token);
+
+      if (response.status === 200) {
+        setMessage('지원 취소 성공');
+        setIsApplied(false);
+      }
+    } catch (error: any) {
+      setMessage('지원 취소 실패');
+      console.error(error);
+    }
+  };
+
   const handleCloseAlert = () => {
     setMessage('');
   };
 
   const handleSetTestData = () => {
-    const testShopId = '4490151c-5217-4157-b072-9c37b05bed47'; // 테스트용 임의의 가게 ID
-    const testNoticeId = '99996477-82db-4bda-aae1-4044f11d9a8b'; // 테스트용 임의의 공고 ID
+    const testShopId = '07a6a12c-7ca6-4dc2-9342-b7b6209bd9b5'; // 테스트용 임의의 가게 ID
+    const testNoticeId = '98e8edd5-44be-4334-b53a-20c2eac7657a'; // 테스트용 임의의 공고 ID
     localStorage.setItem('shop_id', testShopId);
     localStorage.setItem('notice_id', testNoticeId);
     setShopId(testShopId);
@@ -112,7 +154,7 @@ const JobDetail = () => {
       <div>
         <p>Loading...</p>
         <button onClick={handleSetTestData} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
-          Load Test Data
+          테스트용 데이터
         </button>
       </div>
     );
@@ -122,6 +164,16 @@ const JobDetail = () => {
   return (
     <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
       {message && <Alert message={message} onClose={handleCloseAlert} />}
+      {showCancelAlert && (
+        <AlertForApplyCancel
+          message="신청을 취소하시겠어요?"
+          onClose={() => setShowCancelAlert(false)}
+          onConfirm={() => {
+            handleCancel();
+            setShowCancelAlert(false);
+          }}
+        />
+      )}
       <div className="w-full flex flex-col items-start gap-8">
         <div className="w-full">
           <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
@@ -189,12 +241,23 @@ const JobDetail = () => {
               </div>
               <p className="mt-4 text-gray-900">{shop.description}</p>
               <div className="mt-6">
-                <button
-                  type="button"
-                  className="w-full bg-orange-600 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
-                  onClick={handleApply}>
-                  신청하기
-                </button>
+                {isApplied ? (
+                  <button
+                    type="button"
+                    className="w-full bg-white py-3.5 rounded-md border border-orange-600 justify-center items-center gap-2 inline-flex cursor-pointer"
+                    onClick={() => setShowCancelAlert(true)}>
+                    <div className="text-center text-orange-600 text-base font-bold font-['Spoqa Han Sans Neo'] leading-tight">
+                      취소하기
+                    </div>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="w-full bg-orange-600 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
+                    onClick={handleApply}>
+                    신청하기
+                  </button>
+                )}
               </div>
             </div>
           </div>
