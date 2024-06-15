@@ -61,26 +61,36 @@ export function JobCard({
   const startsTime = convertToKoreanTime(startsAt, workhour);
   return (
     <div
-      className="flex flex-col w-[312px] h-[349px] gap-[20px] p-[16px] rounded-[12px] border border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-white,#FFF)] cursor-pointer"
+      className={`flex flex-col w-[312px] h-[349px] gap-[20px] p-[16px] rounded-[12px] border ${
+        closed
+          ? 'border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-gray-10,#F4F4F5)]'
+          : 'border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-white,#FFF)]'
+      } cursor-pointer`}
       onClick={handleSaveId}>
       <div className="flex justify-center items-center rounded-lg overflow-hidden">
         <Image src={shop.item.imageUrl} height={310} width={282} alt="공고 이미지" loader={({ src }) => src} />
       </div>
       <div className="flex-col flex gap-[8px]">
-        <h1 className="text-[20px] font-semibold">{shop.item.name}</h1>
+        <h1 className={`text-[20px] font-semibold ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+          {shop.item.name}
+        </h1>
         <div className="h-[22px] flex gap-[6px] items-center">
           <Image src="/clock-icon.png" height={20} width={20} alt="clock icon"></Image>
-          <h1 className="text-[14px]">
+          <h1 className={`text-[14px] ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
             {startsTime} ({workhour}시간)
           </h1>
         </div>
         <div className="h-[22px] flex gap-[6px] items-center">
           <Image src="/location-icon.svg" height={20} width={20} alt="location icon"></Image>
-          <h1 className="text-[14px]">{shop.item.address1}</h1>
+          <h1 className={`text-[14px] ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+            {shop.item.address1}
+          </h1>
         </div>
       </div>
       <div className="flex w-full justify-between">
-        <h1 className="text-[24px] font-semibold">{hourlyPay.toLocaleString()}원</h1>
+        <h1 className={`text-[24px] font-semibold ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+          {hourlyPay.toLocaleString()}원
+        </h1>
         {hourlyPay > shop.item.originalHourlyPay && (
           <div className="flex justify-center items-center w-[159px] h-[36px] bg-red-400 text-[14px] px-[12px] gap-[3px] text-white rounded-3xl">
             <h1>기존 시급보다 {((hourlyPay / shop.item.originalHourlyPay) * 100).toFixed(0)}%</h1>
