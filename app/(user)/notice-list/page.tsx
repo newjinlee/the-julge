@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { JobCard } from '@/components/JobCard';
-import Image from 'next/image';
+import Link from 'next/link';
 
 interface JobsResponse {
   offset: number;
@@ -202,15 +202,16 @@ export default function Page() {
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
             {sortedJobs.slice(0, 3).map(item => (
-              <JobCard
-                key={item.item.id}
-                id={item.item.id}
-                startsAt={item.item.startsAt}
-                hourlyPay={item.item.hourlyPay}
-                workhour={item.item.workhour}
-                closed={item.item.closed}
-                shop={item.item.shop}
-              />
+              <Link href={`/notice-list/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+                <JobCard
+                  id={item.item.id}
+                  startsAt={item.item.startsAt}
+                  hourlyPay={item.item.hourlyPay}
+                  workhour={item.item.workhour}
+                  closed={item.item.closed}
+                  shop={item.item.shop}
+                />
+              </Link>
             ))}
           </div>
         )}
@@ -256,15 +257,17 @@ export default function Page() {
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
             {jobsForCurrentPage.map(item => (
-              <JobCard
-                key={item.item.id}
-                id={item.item.id}
-                startsAt={item.item.startsAt}
-                hourlyPay={item.item.hourlyPay}
-                workhour={item.item.workhour}
-                closed={item.item.closed}
-                shop={item.item.shop}
-              />
+              <Link href={`/notice-list/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+                <JobCard
+                  key={item.item.id}
+                  id={item.item.id}
+                  startsAt={item.item.startsAt}
+                  hourlyPay={item.item.hourlyPay}
+                  workhour={item.item.workhour}
+                  closed={item.item.closed}
+                  shop={item.item.shop}
+                />
+              </Link>
             ))}
           </div>
         )}
