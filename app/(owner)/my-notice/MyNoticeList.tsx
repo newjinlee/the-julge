@@ -1,99 +1,105 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ShopData, NoticeData } from '@/types';
+import { JobCard } from '@/components/JobCard';
 
-interface ShopData {
-  id: string;
-  name: string;
-  category: string;
-  address1: string;
-  address2: string;
-  description: string;
-  imageUrl: string;
-  originalHourlyPay: number;
+interface MyNoticeListProps {
+  shopData: ShopData;
 }
 
-const MyNoticeList = () => {
-  const [shopData, setShopData] = useState<ShopData | null>(null);
+const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
+  const [noticeList, setNoticeList] = useState<NoticeData[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const obsRef = useRef<HTMLDivElement | null>(null);
+  const preventRef = useRef(true);
+  const limit = 6;
 
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          const response = await fetch(`/api/users/${userId}`);
-          const userData = await response.json();
-          setShopData(userData.item.shop.item);
-        } else {
-          console.log('no token');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
+  const fetchNoticeList = async () => {
+    try {
+      setLoading(true);
+      const shopId = shopData.item.id;
+      const noticeResponse = await fetch(`/api/shops/${shopId}/notices?offset=${offset}&limit=${limit}`);
+      const noticeData = await noticeResponse.json();
+
+      if (noticeData.items.length < limit) {
+        setHasMore(false);
       }
-    };
 
-    fetchUserInfo();
-  }, [router]);
+      setNoticeList(prev => {
+        // 중복 데이터 제거
+        const newNotices = noticeData.items.filter(
+          (newNotice: NoticeData) => !prev.some(existingNotice => existingNotice.item.id === newNotice.item.id),
+        );
+        return [...prev, ...newNotices];
+      });
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching notices data:', error);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (shopData) {
-      console.log(shopData);
+    if (hasMore && !loading) {
+      fetchNoticeList();
     }
-  }, [shopData]);
+  }, [offset, limit, shopData.item.id]);
+
+  const handleClick = (notice: NoticeData) => {
+    console.log(notice);
+  };
+
+  const handleObserver = (entries: IntersectionObserverEntry[]) => {
+    const target = entries[0];
+    if (target.isIntersecting && preventRef.current && hasMore && !loading) {
+      preventRef.current = false;
+      setOffset(prev => prev + limit);
+      preventRef.current = true;
+    }
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver, { threshold: 0.1 });
+    if (obsRef.current) observer.observe(obsRef.current);
+    return () => {
+      if (obsRef.current) observer.unobserve(obsRef.current);
+      observer.disconnect();
+    };
+  }, [noticeList, loading, hasMore]);
 
   return (
-    <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
-      <div className="w-full flex flex-col items-start gap-8 mb-[60px]">
-        <div className="w-full">
-          {shopData ? (
-            <>
-              <h1 className="text-gray-900 text-2xl font-bold mb-6">내 식당</h1>
-              <div className="flex flex-col bg-The-julge-red-10 p-6 rounded-xl shadow-md lg:flex-row gap-8">
-                <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
-                  <Image
-                    className="w-full h-full object-cover"
-                    src="https://bootcamp-project-api.s3.ap-northeast-2.amazonaws.com/0-1/the-julge/1bdb43c8-ff08-4a46-81b0-7f91efced98c-jinju4.png"
-                    alt="가게사진"
-                    width={597}
-                    height={543}
-                  />
-                </div>
-                <div className="flex flex-col justify-between gap-[12px] w-full lg:w-1/2">
-                  <div>
-                    <div>
-                      <h3 className="text-orange-600 text-base font-bold">식당</h3>
-                      <div className="flex items-center gap-4 mt-2">
-                        <span className="text-2xl font-bold text-gray-900">{shopData.name}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 mt-1">
-                      <div className="w-5 h-5 relative">
-                        <Image src="/location-icon.png" alt="location" layout="fill" objectFit="contain" />
-                      </div>
-                      <p className="text-gray-600">{shopData.address1}</p>
-                    </div>
-                    <p className="mt-4 text-gray-900">{shopData.description}</p>
-                  </div>
-                  <div className="flex flex-row gap-[8px]">
-                    <button type="button" className="w-full bg-white text-The-julge-primary py-3 rounded-md font-bold ">
-                      편집하기
-                    </button>
-                    <button type="button" className="w-full bg-The-julge-primary text-white py-3 rounded-md font-bold">
-                      신청하기
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <p>Loading...</p>
-          )}
+    <div className="w-full">
+      <h1 className="text-gray-900 text-2xl font-bold mb-6">내가 등록한 공고</h1>
+      {noticeList.length === 0 ? (
+        <p>공고를 등록해보세요.</p>
+      ) : (
+        <div className="flex flex-wrap gap-3.5">
+          {noticeList.map(notice => (
+            <div key={notice.item.id} onClick={() => handleClick(notice)}>
+              <JobCard
+                id={notice.item.id}
+                startsAt={notice.item.startsAt}
+                hourlyPay={notice.item.hourlyPay}
+                workhour={notice.item.workhour}
+                closed={notice.item.closed}
+                shop={shopData}
+                currentUserApplication="currentUserApplication"
+                onClick={() => handleClick(notice)}
+              />
+            </div>
+          ))}
         </div>
-      </div>
+      )}
+      <div ref={obsRef} />
+      {loading && <p>로딩 중...</p>}
     </div>
   );
 };

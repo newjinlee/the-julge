@@ -32,10 +32,23 @@ export function NavBar() {
       <div className="text-black w-[1000px] text-2xl flex justify-between items-center gap-4">
         <div className="flex justify-between gap-8">
           <Link className="flex items-center gap-4" href="/notice-list">
-            <Image src="/logo.png" height={100} width={100} alt="logo" />
+            <Image
+              src="/logo-big.png"
+              height={100}
+              width={100}
+              style={{ width: '109px', height: 'auto' }}
+              alt="logo"
+              priority
+            />
           </Link>
           <div className="flex items-center gap-[10px] bg-gray-200 w-[450px] h-[40px] rounded-lg px-3 text-[14px]">
-            <Image src="/search-icon.png" height={20} width={20} alt="search icon" />
+            <Image
+              src="/search-icon.png"
+              height={20}
+              width={20}
+              style={{ width: '20px', height: '20px' }}
+              alt="search icon"
+            />
             <input type="text" placeholder="가게 이름으로 찾아보세요." className="bg-gray-200 w-full" />
           </div>
         </div>
@@ -48,7 +61,12 @@ export function NavBar() {
               </Link>
               <button onClick={handleLogOut}> 로그아웃</button>
               <Link href="/notifications">
-                <Image src="/notification-icon.png" width={20} height={20} alt="notify"></Image>
+                <Image
+                  src="/notification-icon.png"
+                  width={20}
+                  height={20}
+                  style={{ width: '20px', height: '20px' }}
+                  alt="notify"></Image>
               </Link>
             </>
           )}
@@ -59,7 +77,12 @@ export function NavBar() {
               </Link>
               <button onClick={handleLogOut}> 로그아웃</button>
               <Link href="/notifications">
-                <Image src="/notification-icon.png" width={20} height={20} alt="notify"></Image>
+                <Image
+                  src="/notification-icon.png"
+                  width={20}
+                  height={20}
+                  style={{ width: '20px', height: '20px' }}
+                  alt="notify"></Image>
               </Link>
             </>
           )}
