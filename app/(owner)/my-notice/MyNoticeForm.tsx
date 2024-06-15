@@ -173,7 +173,10 @@ const MyNoticeForm = () => {
           />
         </div>
         <div className="flex justify-center gap-2">
-          <button type="button" className="flex justify-center w-[312px] py-[14px] bg-The-julge-gray-40 text-white">
+          <button
+            type="button"
+            className="flex justify-center w-[312px] py-[14px] bg-The-julge-gray-40 text-white"
+            onClick={() => router.push('/my-notice')}>
             돌아가기
           </button>
           <button type="submit" className="flex justify-center w-[312px] py-[14px] bg-The-julge-red-40 text-white">
