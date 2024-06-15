@@ -1,20 +1,45 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import AddImage from '@/public/Group 87.svg';
+import EditImage from '@/public/EditImage.png';
+import createPresignedUrl from '@/app/api/(owner)/my-store/createPresignedUrl';
+import uploadImageToS3 from '@/utils/uploadImageToS3';
+import getImageUrlWithoutQueryParams from '@/utils/getImageUrlWithoutQueryParams';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface ImageUploadProps {
-  onFileChange: (file: File) => void;
+  onFileChange: (imageUrl: string) => void;
+  value: string | null;
+  isEditPage: boolean;
 }
 
-export default function ImageUpload({ onFileChange }: ImageUploadProps) {
-  const [imageUrl, setImageUrl] = useState<string>('');
+export default function ImageUpload({ onFileChange, value, isEditPage }: ImageUploadProps) {
+  const [imageUrl, setImageUrl] = useState<string | null>(value);
+  const [uploading, setUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setImageUrl(value);
+  }, [value]);
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageUrl(URL.createObjectURL(file));
-      onFileChange(file);
+      setUploading(true);
+      try {
+        const presignedUrl = await createPresignedUrl(file.name); // Presigned URL 생성
+        await uploadImageToS3(presignedUrl, file); // S3로 이미지 업로드
+
+        const imageUrlWithoutQueryParams = getImageUrlWithoutQueryParams(presignedUrl); // 쿼리 파라미터 제거한 URL
+        setImageUrl(imageUrlWithoutQueryParams); // 이미지 URL 설정
+        onFileChange(imageUrlWithoutQueryParams); // 이미지 파일을 부모 컴포넌트로 전달
+      } catch (error) {
+        console.error('File upload error:', error);
+      } finally {
+        setTimeout(() => {
+          setUploading(false);
+        }, 2000);
+      }
     }
   };
 
@@ -34,10 +59,23 @@ export default function ImageUpload({ onFileChange }: ImageUploadProps) {
         <div
           onClick={handleImageClick}
           className="cursor-pointer relative w-[455px] h-[276px] rounded-md overflow-hidden">
+          {uploading && <LoadingSpinner />}
           {imageUrl ? (
-            <Image src={imageUrl} alt="Preview" style={{ objectFit: 'cover' }} />
+
+            isEditPage ? (
+              <div className="relative w-full h-full">
+                <Image src={imageUrl} alt="Preview" fill className="object-contain z-0" priority />
+                <div className="absolute inset-0 bg-black opacity-50"></div>
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <Image src={EditImage} alt="이미지 변경하기" className="auto-size" />
+                </div>
+              </div>
+            ) : (
+              <Image src={imageUrl} alt="Preview" fill className="object-contain" />
+            )
           ) : (
-            <Image src={AddImage} alt="이미지 추가하기" style={{ objectFit: 'cover' }} />
+            <Image src={AddImage} alt="이미지 추가하기" fill className="object-contain" />
+
           )}
         </div>
       </div>

@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
-import Image from 'next/image';
-import closeIcon from '@/public/close-icon.png';
+import { useEffect, useRef, useState, memo } from 'react';
+import { useFormik } from 'formik';
+import { registerStore } from '@/app/api/(owner)/my-store/registerstore';
+import { editStore } from '@/app/api/(owner)/my-store/editstore';
 import CustomInput from '../../../components/CustomInput';
 import CustomTextarea from '../../../components/CustomTextarea';
 import Dropdown from '../../../components/Dropdown';
@@ -11,10 +12,21 @@ import Alert from '../../../components/Alert';
 interface StoreInfoFormProps {
   buttonText: string;
   alertMessage: string;
+  method: 'POST' | 'PUT';
+  shopId?: string;
+  initialValues?: {
+    name: string;
+    category: string;
+    address1: string;
+    address2: string;
+    originalHourlyPay: number;
+    description: string;
+    imageUrl: string;
+  };
+  isEditPage: boolean;
 }
-
-const categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
-const addresses = [
+const Categories = ['한식', '중식', '일식', '양식', '분식', '카페', '편의점', '기타'];
+const Addresses = [
   '서울시 종로구',
   '서울시 중구',
   '서울시 용산구',
@@ -42,13 +54,30 @@ const addresses = [
   '서울시 강동구',
 ];
 
-export default function StoreInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
-  const [file, setFile] = useState<File | null>(null);
+function StoreInfoForm({
+  buttonText,
+  alertMessage,
+  method,
+  shopId,
+  initialValues = {
+    name: '',
+    category: '',
+    address1: '',
+    address2: '',
+    originalHourlyPay: 0,
+    description: '',
+    imageUrl: '',
+  },
+  isEditPage,
+}: StoreInfoFormProps) {
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(null);
+  const initialValuesRef = useRef(initialValues);
 
-  const handleFileChange = (file: File) => {
-    setFile(file);
-  };
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+  }, []);
 
   const handleAlertOpen = () => {
     setShowAlert(true);
@@ -58,40 +87,123 @@ export default function StoreInfoForm({ buttonText, alertMessage }: StoreInfoFor
     setShowAlert(false);
   };
 
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      category: '',
+      address1: '',
+      address2: '',
+      originalHourlyPay: 0,
+      description: '',
+      imageUrl: '',
+    },
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        if (!token) {
+          throw new Error('토큰이 없습니다');
+        }
+
+        if (method === 'POST') {
+          await registerStore(values);
+        } else if (method === 'PUT') {
+          await editStore(shopId, values);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (JSON.stringify(initialValuesRef.current) !== JSON.stringify(initialValues)) {
+      formik.setValues(initialValues);
+      initialValuesRef.current = initialValues;
+    }
+  }, [formik, initialValues]);
+
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="relative max-w-[964px] h-full mx-auto px-5 py-[60px] md:py-[60px]">
-        <div className="flex items-center justify-between mb-7">
-          <h1 className="font-bold text-2xl">가게 정보</h1>
-        </div>
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CustomInput label="가게 이름*" placeholder="입력" />
-            <Dropdown label="분류*" options={categories} />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Dropdown label="주소*" options={addresses} />
-            <CustomInput label="상세주소*" placeholder="입력" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <CustomInput label="기본 시급*" unit="원" placeholder="입력" />
+    <form onSubmit={formik.handleSubmit}>
+      <div className="bg-gray-50 min-h-screen">
+        <div className="relative max-w-[964px] h-full mx-auto px-5 py-[60px] md:py-[60px]">
+          <div className="flex items-center justify-between mb-7">
+            <h1 className="font-bold text-2xl">가게 정보</h1>
           </div>
           <div>
-            <ImageUpload onFileChange={handleFileChange} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CustomInput
+                label="가게 이름*"
+                placeholder="입력"
+                name="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+              />
+              <Dropdown
+                label="분류*"
+                name="category"
+                options={Categories}
+                value={formik.values.category}
+                onChange={(value: string) => formik.setFieldValue('category', value)}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Dropdown
+                label="주소*"
+                name="address1"
+                options={Addresses}
+                value={formik.values.address1}
+                onChange={(value: string) => formik.setFieldValue('address1', value)}
+              />
+              <CustomInput
+                label="상세주소*"
+                placeholder="입력"
+                name="address2"
+                value={formik.values.address2}
+                onChange={formik.handleChange}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CustomInput
+                label="기본 시급*"
+                placeholder="입력"
+                unit="원"
+                name="originalHourlyPay"
+                value={formik.values.originalHourlyPay}
+                onChange={formik.handleChange}
+              />
+            </div>
+            <div>
+              <ImageUpload
+                onFileChange={(imageUrl: string) => formik.setFieldValue('imageUrl', imageUrl)}
+                value={formik.values.imageUrl}
+                isEditPage={isEditPage}
+              />
+            </div>
+            <div>
+              <CustomTextarea
+                label="가게 설명"
+                placeholder="입력"
+                name="description"
+                value={formik.values.description}
+                onChange={formik.handleChange}
+              />
+            </div>
           </div>
-          <div>
-            <CustomTextarea label="가게 설명" placeholder="입력" />
+          <div className="flex justify-center">
+            <button
+              onClick={handleAlertOpen}
+              type="submit"
+              disabled={formik.isSubmitting}
+              className="w-[312px] h-12 font-bold border rounded-md px-12 py-3 text-center text-white whitespace-nowrap bg-red-500">
+              {buttonText}
+            </button>
           </div>
+          {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} isEditPage={isEditPage} />}
         </div>
-        <div className="flex justify-center">
-          <button
-            onClick={handleAlertOpen}
-            className="w-[312px] h-12 bg-red-500 text-white font-bold border rounded-md px-12 py-3 text-center whitespace-nowrap">
-            {buttonText}
-          </button>
-        </div>
-        {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} />}
       </div>
-    </div>
+    </form>
   );
 }
+
+export default memo(StoreInfoForm);
