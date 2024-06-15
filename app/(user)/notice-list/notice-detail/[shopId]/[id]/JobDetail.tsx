@@ -5,29 +5,7 @@ import Image from 'next/image';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
 import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
-
-type Job = {
-  id: string;
-  description: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string; // shop_id
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
-};
+import { Job } from '@/types/job'
 
 const JobDetail = () => {
   const [message, setMessage] = useState('');

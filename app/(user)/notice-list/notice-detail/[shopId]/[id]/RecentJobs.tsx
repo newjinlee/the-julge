@@ -5,28 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import JobCardForRecentSearch from './JobCardForRecentSearch';
 import { getRecentJobs, saveRecentJob } from '@/utils/localStorageHelper';
 import { fetchJobDetails } from '@/utils/api';
-
-type Job = {
-  id: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string; // shop_id
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
-};
+import { Job } from '@/types/job'
 
 const RecentJobs = () => {
   const [recentJobs, setRecentJobs] = useState<Job[]>([]);
@@ -93,18 +72,12 @@ const RecentJobs = () => {
           <div className="flex flex-wrap gap-3.5">
             {recentJobs.map(job => (
               <div key={job.id} onClick={() => handleClick(job)}>
-                <JobCardForRecentSearch
-                  key={job.id}
-                  id={job.id}
-                  startsAt={job.startsAt}
-                  hourlyPay={job.hourlyPay}
-                  workhour={job.workhour}
-                  closed={job.closed}
-                  shop={job.shop}
-                  currentUserApplication={job.currentUserApplication}
-                  onClick={() => handleClick(job)}
-                />
-              </div>
+              <JobCardForRecentSearch
+                key={job.id}
+                job={job}
+                onClick={() => handleClick(job)}
+              />
+            </div>
             ))}
           </div>
         )}

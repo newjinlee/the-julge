@@ -1,64 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { convertToKoreanTime } from '@/utils/timeChangeHelper';
+import { Job } from '@/types/job'
 
 type JobCardProps = {
-  id: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string;
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
+  job: Job;
   onClick: () => void;
 };
 
-const convertToKoreanTime = (utcTime: string, workhour: number) => {
-  if (isNaN(Date.parse(utcTime))) {
-    return 'Invalid time value';
-  }
-
-  const utcDate = new Date(utcTime);
-
-  const startHours = utcDate.getUTCHours();
-  let endHours = startHours + Math.floor(workhour);
-  const minutes = (workhour % 1) * 60;
-
-  if (endHours >= 24) {
-    endHours -= 24;
-    utcDate.setUTCDate(utcDate.getUTCDate() + 1);
-  }
-
-  return `${utcDate.toISOString().slice(0, 16).replace('T', ' ')}~${String(endHours).padStart(2, '0')}:${String(Math.round(minutes)).padStart(2, '0')}`;
-};
-
-const JobCardForRecentSearch: React.FC<JobCardProps> = ({
-  id,
-  startsAt,
-  hourlyPay,
-  workhour,
-  closed,
-  shop,
-  currentUserApplication,
-  onClick,
-}) => {
+const JobCardForRecentSearch: React.FC<JobCardProps> = ({ job, onClick }) => {
   const [startTime, setStartTime] = useState('');
 
   useEffect(() => {
-    setStartTime(convertToKoreanTime(startsAt, workhour));
-  }, [startsAt, workhour]);
+    setStartTime(convertToKoreanTime(job.startsAt, job.workhour));
+  }, [job.startsAt, job.workhour]);
 
-  if (!shop || !shop.item) {
+  if (!job.shop || !job.shop.item) {
     return null;
   }
 
@@ -67,11 +23,11 @@ const JobCardForRecentSearch: React.FC<JobCardProps> = ({
       className="w-[312px] h-auto p-4 bg-white rounded-xl border border-zinc-200 flex flex-col justify-start items-start gap-5"
       onClick={onClick}>
       <div className="w-full h-40 rounded-xl overflow-hidden justify-center items-center flex">
-        <img className="w-full h-full object-cover" src={shop.item.imageUrl} alt={shop.item.name} />
+        <img className="w-full h-full object-cover" src={job.shop.item.imageUrl} alt={job.shop.item.name} />
       </div>
       <div className="flex flex-col justify-between items-start gap-4 flex-grow">
         <div className="flex flex-col justify-start items-start gap-2">
-          <div className="text-gray-900 text-xl font-bold font-['Spoqa Han Sans Neo']">{shop.item.name}</div>
+          <div className="text-gray-900 text-xl font-bold font-['Spoqa Han Sans Neo']">{job.shop.item.name}</div>
           <div className="justify-start items-center gap-1.5 inline-flex">
             <div className="w-5 h-5 relative">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,7 +47,7 @@ const JobCardForRecentSearch: React.FC<JobCardProps> = ({
               </svg>
             </div>
             <div className="text-zinc-500 text-sm font-normal font-['Spoqa Han Sans Neo'] leading-snug">
-              {startTime} ({workhour}시간)
+              {startTime} ({job.workhour}시간)
             </div>
           </div>
           <div className="justify-start items-center gap-1.5 inline-flex">
@@ -104,19 +60,19 @@ const JobCardForRecentSearch: React.FC<JobCardProps> = ({
               </svg>
             </div>
             <div className="text-zinc-500 text-sm font-normal font-['Spoqa Han Sans Neo'] leading-snug">
-              {shop.item.address1}
+              {job.shop.item.address1}
             </div>
           </div>
         </div>
         <div className="self-stretch gap-3 flex justify-between items-center">
           <div className="text-gray-900 text-2xl font-bold font-['Spoqa Han Sans Neo'] tracking-wide">
-            {hourlyPay.toLocaleString('ko-KR')}원
+            {job.hourlyPay.toLocaleString('ko-KR')}원
           </div>
           <div className="w-[168px] p-3 bg-red-500 rounded-[20px] justify-start items-center gap-1.5 flex">
             <div className="justify-start items-center gap-0.5 flex">
               <div className="justify-start items-start flex">
                 <div className="text-white text-sm font-bold font-['Spoqa Han Sans Neo']">
-                  <span>기존 시급보다 {((hourlyPay / shop.item.originalHourlyPay) * 100).toFixed(0)}%</span>
+                  <span>기존 시급보다 {((job.hourlyPay / job.shop.item.originalHourlyPay) * 100).toFixed(0)}%</span>
                 </div>
                 <div className="w-5 h-5 flex justify-center items-center">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

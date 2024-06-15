@@ -1,24 +1,4 @@
-type Job = {
-  id: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string; // shop_id
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
-};
+import { Job } from '../types/job'
 
 export const saveRecentJob = (job: Job) => {
   const recentJobs: Job[] = JSON.parse(localStorage.getItem('recentJobs') || '[]');
