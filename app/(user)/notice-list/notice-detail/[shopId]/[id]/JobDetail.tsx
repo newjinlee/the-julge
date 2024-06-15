@@ -153,9 +153,6 @@ const JobDetail = () => {
     return (
       <div>
         <p>Loading...</p>
-        <button onClick={handleSetTestData} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
-          테스트용 데이터
-        </button>
       </div>
     );
 
@@ -192,7 +189,7 @@ const JobDetail = () => {
               <div>
                 <h3 className="text-orange-600 text-base font-bold">시급</h3>
                 <div className="flex items-center gap-4 mt-2">
-                  <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString()}원</span>
+                  <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString('ko-KR')}원</span>
                   <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
                     <span>기존 시급보다 {((job.hourlyPay / shop.originalHourlyPay) * 100).toFixed(0)}%</span>
                     <div className="w-5 h-5 relative">
