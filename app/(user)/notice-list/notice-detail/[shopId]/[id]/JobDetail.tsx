@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
 import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
-import { Job } from '@/types/job'
+import { Job } from '@/types/job';
 
 const JobDetail = () => {
   const [message, setMessage] = useState('');
@@ -141,15 +141,18 @@ const JobDetail = () => {
           <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
           <h1 className="text-gray-900 text-2xl font-bold mb-6">{shop.name}</h1>
           <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
-            <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
-              <Image
-                className="w-full h-full object-cover"
-                src={shop.imageUrl}
-                alt={shop.name}
-                width={597}
-                height={543}
-              />
-            </div>
+            <Image
+              className={`w-full h-full object-cover ${job.closed ? 'opacity-50' : ''}`}
+              src={shop.imageUrl}
+              alt={shop.name}
+              width={597}
+              height={543}
+            />
+            {job.closed && (
+              <div className="absolute inset-0 flex justify-center items-center">
+                <span className="text-white text-2xl font-bold">마감 완료</span>
+              </div>
+            )}
             <div className="flex flex-col justify-between w-full lg:w-1/2">
               <div>
                 <h3 className="text-orange-600 text-base font-bold">시급</h3>
@@ -211,6 +214,13 @@ const JobDetail = () => {
                     <div className="text-center text-orange-600 text-base font-bold font-['Spoqa Han Sans Neo'] leading-tight">
                       취소하기
                     </div>
+                  </button>
+                ) : job.closed ? (
+                  <button
+                    type="button"
+                    className="w-full bg-gray-400 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo'] cursor-not-allowed"
+                    disabled>
+                    신청 불가
                   </button>
                 ) : (
                   <button
