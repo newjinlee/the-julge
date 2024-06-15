@@ -189,9 +189,10 @@ export default function Page() {
 
   const jobsForCurrentPage = sortedJobs.slice((currentPage - 1) * 6, currentPage * 6);
 
-  if (jobs) {
-    console.log(jobs);
-  }
+  // 맞춤 공고 필터링, user가 없으면 기본 sortedJobs 사용
+  const matchedJobs = user
+    ? sortedJobs.filter(job => job.item.shop.item.address1.includes(user.item.address))
+    : sortedJobs.slice(0, 3);
 
   return (
     <>
@@ -201,7 +202,7 @@ export default function Page() {
         </h1>
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {sortedJobs.slice(0, 3).map(item => (
+            {matchedJobs.slice(0, 3).map(item => (
               <Link href={`/notice-list/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
                 <JobCard
                   id={item.item.id}
