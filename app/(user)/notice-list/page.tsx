@@ -78,7 +78,7 @@ async function fetchJobs(
 ): Promise<JobsResponse> {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      'https://bootcamp-api.codeit.kr/api/5-7/the-julge/notices',
+      'https://bootcamp-api.codeit.kr/api/0-1/the-julge/notices',
       {
         params: {
           offset,
@@ -110,6 +110,7 @@ async function fetchUserInfo(userId: string): Promise<UserResponse> {
 export default function Page() {
   const [jobs, setJobs] = useState<JobsResponse | null>(null);
   const [allJobs, setAllJobs] = useState<JobsResponse['items']>([]);
+  const [filteredJobs, setFilteredJobs] = useState<JobsResponse['items']>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -151,6 +152,16 @@ export default function Page() {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const filtered = searchShopValue
+      ? allJobs.filter(item => item.item.shop.item.name.toLowerCase().includes(searchShopValue.toLowerCase()))
+      : allJobs;
+
+    setFilteredJobs(filtered);
+    setTotalPages(Math.ceil(filtered.length / 6));
+    setCurrentPage(1); // Reset to the first page whenever the search changes
+  }, [searchShopValue, allJobs]);
+
   const sortJobs = (items, option) => {
     switch (option) {
       case '시급 많은 순':
@@ -191,7 +202,7 @@ export default function Page() {
     setIsDropdownOpen(false);
   };
 
-  const sortedJobs = sortJobs([...allJobs], selectedOption);
+  const sortedJobs = sortJobs([...filteredJobs], selectedOption);
 
   const jobsForCurrentPage = sortedJobs.slice((currentPage - 1) * 6, currentPage * 6);
 
@@ -264,40 +275,19 @@ export default function Page() {
         </div>
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {searchShopValue
-              ? sortedJobs
-                  .filter(item => item.item.shop.item.name.toLowerCase().includes(searchShopValue.toLowerCase()))
-                  .slice((currentPage - 1) * 6, currentPage * 6)
-                  .map(item => (
-                    <Link
-                      href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`}
-                      key={item.item.id}>
-                      <JobCard
-                        key={item.item.id}
-                        id={item.item.id}
-                        startsAt={item.item.startsAt}
-                        hourlyPay={item.item.hourlyPay}
-                        workhour={item.item.workhour}
-                        closed={item.item.closed}
-                        shop={item.item.shop}
-                      />
-                    </Link>
-                  ))
-              : jobsForCurrentPage.map(item => (
-                  <Link
-                    href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`}
-                    key={item.item.id}>
-                    <JobCard
-                      key={item.item.id}
-                      id={item.item.id}
-                      startsAt={item.item.startsAt}
-                      hourlyPay={item.item.hourlyPay}
-                      workhour={item.item.workhour}
-                      closed={item.item.closed}
-                      shop={item.item.shop}
-                    />
-                  </Link>
-                ))}
+            {jobsForCurrentPage.map(item => (
+              <Link href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+                <JobCard
+                  key={item.item.id}
+                  id={item.item.id}
+                  startsAt={item.item.startsAt}
+                  hourlyPay={item.item.hourlyPay}
+                  workhour={item.item.workhour}
+                  closed={item.item.closed}
+                  shop={item.item.shop}
+                />
+              </Link>
+            ))}
           </div>
         )}
         <div className="flex w-100% px-3 justify-center items-center">
