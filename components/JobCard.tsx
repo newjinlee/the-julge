@@ -23,9 +23,20 @@ type JobCardProps = {
   onClick: () => void;
 };
 
-export function JobCard({ id, startsAt, hourlyPay, workhour, closed, shop, currentUserApplication, onClick }: JobCardProps) {
+export function JobCard({
+  id,
+  startsAt,
+  hourlyPay,
+  workhour,
+  closed,
+  shop,
+  currentUserApplication,
+  onClick,
+}: JobCardProps) {
   return (
-    <div className="flex w-[312px] h-[349px] rounded-md shadow-lg flex-col p-[16px] border-solid border-2 border-gray-200 justify-between cursor-pointer" onClick={onClick}>
+    <div
+      className="flex w-[312px] h-[349px] rounded-md shadow-lg flex-col p-[16px] border-solid border-2 border-gray-200 justify-between cursor-pointer"
+      onClick={onClick}>
       <Image src={shop.item.imageUrl} height={160} width={280} alt="logo"></Image>
       <div className="flex-col flex gap-[8px]">
         <h1 className="text-[20px] font-semibold">{shop.item.name}</h1>

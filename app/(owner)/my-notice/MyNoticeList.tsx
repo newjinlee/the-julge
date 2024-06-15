@@ -83,7 +83,7 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
       ) : (
         <div className="flex flex-wrap gap-3.5">
           {noticeList.map(notice => (
-            <div key={notice.item.id} onClick={() => handleClick(notice)}>
+            <div key={notice.item.id}>
               <JobCard
                 id={notice.item.id}
                 startsAt={notice.item.startsAt}
