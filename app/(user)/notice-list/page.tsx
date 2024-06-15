@@ -77,7 +77,7 @@ async function fetchJobs(
 ): Promise<JobsResponse> {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      'https://bootcamp-api.codeit.kr/api/0-1/the-julge/notices',
+      'https://bootcamp-api.codeit.kr/api/5-7/the-julge/notices',
       {
         params: {
           offset,
@@ -189,10 +189,11 @@ export default function Page() {
 
   const jobsForCurrentPage = sortedJobs.slice((currentPage - 1) * 6, currentPage * 6);
 
-  // 맞춤 공고 필터링, user가 없으면 기본 sortedJobs 사용
   const matchedJobs = user
     ? sortedJobs.filter(job => job.item.shop.item.address1.includes(user.item.address))
     : sortedJobs.slice(0, 3);
+
+  const displayedMatchedJobs = matchedJobs.length > 0 ? matchedJobs.slice(0, 3) : sortedJobs.slice(0, 3);
 
   return (
     <>
@@ -202,8 +203,8 @@ export default function Page() {
         </h1>
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {matchedJobs.slice(0, 3).map(item => (
-              <Link href={`/notice-list/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+            {displayedMatchedJobs.map(item => (
+              <Link href={`/notice-list//notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
                 <JobCard
                   id={item.item.id}
                   startsAt={item.item.startsAt}
@@ -229,7 +230,7 @@ export default function Page() {
               {selectedOption}
             </button>
             {isDropdownOpen && (
-              <div className="absolute mt-[30px] bg-[#F2F2F3] rounded-[5px] shadow-md">
+              <div className="absolute mt-[30px] bg-[#F2F2F3] rounded-[5px] shadow-md z-10">
                 <button
                   className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
                   onClick={() => handleOptionSelect('마감임박순')}>
@@ -258,7 +259,7 @@ export default function Page() {
         {jobs && (
           <div className="grid grid-cols-3 gap-[14px] justify-start">
             {jobsForCurrentPage.map(item => (
-              <Link href={`/notice-list/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+              <Link href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
                 <JobCard
                   key={item.item.id}
                   id={item.item.id}

@@ -67,13 +67,23 @@ export function JobCard({
           : 'border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-white,#FFF)]'
       } cursor-pointer`}
       onClick={handleSaveId}>
-      <div className="flex justify-center items-center rounded-lg overflow-hidden">
-        <Image src={shop.item.imageUrl} height={310} width={282} alt="공고 이미지" loader={({ src }) => src} />
+      <div className="flex justify-center items-center rounded-lg overflow-hidden relative">
+        <Image
+          className={closed && `brightness-50`}
+          src={shop.item.imageUrl}
+          height={310}
+          width={282}
+          alt="공고 이미지"
+          loader={({ src }) => src}
+        />
+        {closed && (
+          <p className="absolute top-50% left-50% text-white text-center font-spoqa font-bold text-[28px] leading-normal tracking-[0.56px] z-0">
+            마감 완료
+          </p>
+        )}
       </div>
       <div className="flex-col flex gap-[8px]">
-        <h1 className={`text-[20px] font-semibold ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
-          {shop.item.name}
-        </h1>
+        <h1 className={`text-[20px] font-semibold ${closed ? 'text-[#A3A3A3]' : ''}`}>{shop.item.name}</h1>
         <div className="h-[22px] flex gap-[6px] items-center">
           <Image src="/clock-icon.png" height={20} width={20} alt="clock icon"></Image>
           <h1 className={`text-[14px] ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
@@ -92,7 +102,8 @@ export function JobCard({
           {hourlyPay.toLocaleString()}원
         </h1>
         {hourlyPay > shop.item.originalHourlyPay && (
-          <div className="flex justify-center items-center w-[159px] h-[36px] bg-red-400 text-[14px] px-[12px] gap-[3px] text-white rounded-3xl">
+          <div
+            className={`flex justify-center items-center w-[159px] h-[36px] ${closed ? 'bg-[#E5E4E7]' : 'bg-red-400'} text-[14px] px-[12px] gap-[3px] text-white rounded-3xl`}>
             <h1>기존 시급보다 {((hourlyPay / shop.item.originalHourlyPay) * 100).toFixed(0)}%</h1>
             <Image src="/arrow-up-icon.svg" height={14} width={14} alt="arrow up icon"></Image>
           </div>
