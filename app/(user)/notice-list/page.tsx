@@ -78,7 +78,7 @@ async function fetchJobs(
 ): Promise<JobsResponse> {
   try {
     const response: AxiosResponse<JobsResponse> = await axios.get(
-      'https://bootcamp-api.codeit.kr/api/0-1/the-julge/notices',
+      'https://bootcamp-api.codeit.kr/api/5-7/the-julge/notices',
       {
         params: {
           offset,

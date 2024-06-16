@@ -54,8 +54,8 @@ export function JobCard({
   }
 
   const handleSaveId = () => {
-    localStorage.setItem('jobId', id);
-    localStorage.setItem('shopId', shop.item.id);
+    localStorage.setItem('notice_id', id);
+    localStorage.setItem('shop_id', shop.item.id);
   };
 
   const startsTime = convertToKoreanTime(startsAt, workhour);
