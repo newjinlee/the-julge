@@ -2,20 +2,26 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import useShopData from '@/app/hooks/useShopData';
 import { NoticeFullDetailData, Applications } from '@/types';
 import useNoticeFullDetail from '@/app/hooks/useNoticeFullDetail';
+import Pagination from '@/components/Pagination';
 
 const MyNoticeDetail = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get('page') || '1');
+
   const { noticeId } = useParams();
+
+  const [shopId, setShopId] = useState<string | ''>('');
 
   const [noticeFullDetail, setNoticeFullDetail] = useState<NoticeFullDetailData>();
   const [applications, setApplications] = useState<Applications>();
 
-  const [offset, setOffset] = useState(0);
   const limit = 5;
+  const [offset, setOffset] = useState((page - 1) * limit);
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -27,6 +33,7 @@ const MyNoticeDetail = () => {
     const fetchNoticeDetail = async () => {
       try {
         const shop = await useShopData(userId);
+        setShopId(shop.item.id);
         const detail: NoticeFullDetailData = await useNoticeFullDetail(shop.item.id, noticeId, offset, limit);
         setNoticeFullDetail(detail);
         setApplications(detail.item.currentUserApplication);
@@ -36,10 +43,10 @@ const MyNoticeDetail = () => {
     };
 
     fetchNoticeDetail();
-  }, [noticeId]);
+  }, [noticeId, offset]);
 
   const handleClick = () => {
-    console.log(applications);
+    console.log(page);
   };
 
   const formatNumber = (num: number) => {
@@ -163,36 +170,38 @@ const MyNoticeDetail = () => {
           <div className="flex flex-col gap-[32px] mt-[60px]">
             <h1 className="text-The-julge-black text-2xl font-bold mb-6">신청자 목록</h1>
             <div>
-              <table className="border w-full text-left">
-                <thead className="bg-The-julge-red-10">
-                  <tr>
-                    <th className="px-[12px] py-[14px]">신청자</th>
-                    <th>소개</th>
-                    <th>전화번호</th>
-                    <th>상태</th>
-                  </tr>
-                </thead>
-                {applications && applications.count > 0 ? (
-                  <tbody>
-                    {applications.items.map((application: any, index: number) => (
-                      <tr key={index}>
-                        <td className="px-[12px] py-[20px]">{application.item.user.item.name}</td>
-                        <td>{application.item.user.item.bio}</td>
-                        <td>{application.item.user.item.phone}</td>
-                        <td>{application.item.status}</td>
+              {applications && applications.count > 0 ? (
+                <>
+                  <table className="border w-full text-left">
+                    <thead className="bg-The-julge-red-10">
+                      <tr>
+                        <th className="px-[12px] py-[14px]">신청자</th>
+                        <th>소개</th>
+                        <th>전화번호</th>
+                        <th>상태</th>
                       </tr>
-                    ))}
-                  </tbody>
-                ) : (
-                  <tbody>
-                    <tr>
-                      <td colSpan={4} className="px-[12px] py-[20px] text-center">
-                        신청자가 없습니다.
-                      </td>
-                    </tr>
-                  </tbody>
-                )}
-              </table>
+                    </thead>
+                    <tbody>
+                      {applications.items.map((application: any, index: number) => (
+                        <tr key={index}>
+                          <td className="px-[12px] py-[20px]">{application.item.user.item.name}</td>
+                          <td>{application.item.user.item.id}</td>
+                          <td>{application.item.user.item.phone}</td>
+                          <td>{application.item.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <Pagination
+                    currentPage={Math.floor(offset / limit) + 1}
+                    totalPages={Math.ceil(applications.count / limit)}
+                    hasNext={applications.hasNext}
+                    noticeId={noticeId}
+                  />
+                </>
+              ) : (
+                <p>신청자 없음</p>
+              )}
             </div>
           </div>
         </div>
