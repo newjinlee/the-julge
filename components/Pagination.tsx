@@ -51,7 +51,7 @@ const Pagination = ({ currentPage, totalPages, hasNext, noticeId, onPageChange }
   };
 
   return (
-    <div className="mt-3">
+    <div>
       <div className="flex flex-row justify-center items-center gap-[2px]">
         <button
           onClick={() => handlePrevious()}

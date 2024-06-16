@@ -21,11 +21,10 @@ const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ shopData }) => {
             <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
               <Image
                 className="w-full h-full object-cover"
-                src="https://bootcamp-project-api.s3.ap-northeast-2.amazonaws.com/0-1/the-julge/1bdb43c8-ff08-4a46-81b0-7f91efced98c-jinju4.png"
+                src={shopData.item.imageUrl}
                 alt="가게사진"
                 width={597}
                 height={543}
-                priority
               />
             </div>
             <div className="flex flex-col justify-between gap-[12px] w-full lg:w-1/2">
