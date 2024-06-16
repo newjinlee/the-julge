@@ -27,16 +27,40 @@ const JobDetail = () => {
       fetchJobDetails(storedShopId, storedNoticeId)
         .then(data => {
           setJob(data);
-          if (data.currentUserApplication) {
-            setIsApplied(true);
-          }
           const currentTime = new Date();
           const jobStartTime = new Date(data.startsAt);
           setIsPastJob(currentTime > jobStartTime);
+
+          if (data.currentUserApplication) {
+            setIsApplied(true);
+          } else {
+            checkIfUserApplied(storedShopId, storedNoticeId);
+          }
         })
         .catch(error => console.error(error));
     }
   }, []);
+
+  const checkIfUserApplied = async (shopId: string, noticeId: string) => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      setMessage('로그인이 필요합니다');
+      return;
+    }
+
+    try {
+      const applications = await fetchApplications(shopId, noticeId, token);
+      const userApplication = applications.find((app: any) => app.item.user.item.id === userId);
+
+      if (userApplication) {
+        setIsApplied(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch applications', error);
+    }
+  };
 
   const handleApply = async () => {
     const token = localStorage.getItem('token');

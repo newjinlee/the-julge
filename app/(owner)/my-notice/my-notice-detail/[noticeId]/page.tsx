@@ -2,26 +2,32 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import useShopData from '@/app/hooks/useShopData';
 import { NoticeFullDetailData, Applications } from '@/types';
 import useNoticeFullDetail from '@/app/hooks/useNoticeFullDetail';
 import Pagination from '@/components/Pagination';
+import Alert from '@/components/ConfirmAlert';
+import { toast } from 'react-toastify';
 
 const MyNoticeDetail = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get('page') || '1');
-
   const { noticeId } = useParams();
 
-  const [shopId, setShopId] = useState<string | ''>('');
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const [noticeFullDetail, setNoticeFullDetail] = useState<NoticeFullDetailData>();
   const [applications, setApplications] = useState<Applications>();
+  const [shopId, setShopId] = useState<string>('');
+
+  const [status, setStatus] = useState<string>('');
+  const [applicationId, setApplicationId] = useState<string>('');
+  const [confirmMessage, setConfirmMessage] = useState<string>('');
 
   const limit = 5;
-  const [offset, setOffset] = useState((page - 1) * limit);
+  const [page, setPage] = useState(1);
+  const offset = (page - 1) * limit;
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -33,8 +39,14 @@ const MyNoticeDetail = () => {
     const fetchNoticeDetail = async () => {
       try {
         const shop = await useShopData(userId);
-        setShopId(shop.item.id);
         const detail: NoticeFullDetailData = await useNoticeFullDetail(shop.item.id, noticeId, offset, limit);
+
+        // 마감 된 공고는 내가게 페이지로 이동
+        if (detail.item.closed) {
+          router.push('/my-store');
+        }
+
+        setShopId(shop.item.id);
         setNoticeFullDetail(detail);
         setApplications(detail.item.currentUserApplication);
       } catch (error) {
@@ -45,8 +57,60 @@ const MyNoticeDetail = () => {
     fetchNoticeDetail();
   }, [noticeId, offset]);
 
-  const handleClick = () => {
-    console.log(page);
+  // alert
+  const handleAlertOpen = () => {
+    setShowAlert(true);
+  };
+
+  const handleAlertClose = () => {
+    setShowAlert(false);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleConfirm = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch(`/api/shops/${shopId}/notices/${noticeId}/applications/${applicationId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: status }),
+      });
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.error || 'fail to register/update notice');
+      }
+
+      handleAlertClose();
+      toast.success(`${confirmMessage} 완료`);
+    } catch (error: any) {
+      console.error('Error', error);
+      handleAlertClose();
+      toast.error(error.message);
+    } finally {
+      setTimeout(() => {
+        router.push('/my-store');
+      }, 1500); // 1초 후에 페이지 이동
+    }
+  };
+
+  const handleUpdateApplication = async (status: string, applicationId: string) => {
+    const message = status === 'rejected' ? '거절' : '승인';
+    setConfirmMessage(message);
+
+    setStatus(status);
+    setApplicationId(applicationId);
+
+    setAlertMessage(`신청을 ${message}하시겠어요?`);
+    handleAlertOpen();
+    return;
   };
 
   const formatNumber = (num: number) => {
@@ -77,7 +141,6 @@ const MyNoticeDetail = () => {
     <>
       {noticeFullDetail && (
         <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
-          <button onClick={handleClick}>test</button>
           <div className="w-full flex flex-col items-start gap-8 mb-[60px]">
             <div className="w-full">
               <h2 className="text-orange-600 text-base font-bold">{noticeFullDetail.item.shop.item.category}</h2>
@@ -175,35 +238,60 @@ const MyNoticeDetail = () => {
                   <table className="border w-full text-left">
                     <thead className="bg-The-julge-red-10">
                       <tr>
-                        <th className="px-[12px] py-[14px]">신청자</th>
-                        <th>소개</th>
-                        <th>전화번호</th>
+                        <th className="px-[12px] py-[14px] w-[180px]">신청자</th>
+                        <th className="px-[12px] py-[14px] w-[320px]">소개</th>
+                        <th className="px-[12px] py-[14px] w-[200px]">전화번호</th>
                         <th>상태</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {applications.items.map((application: any, index: number) => (
-                        <tr key={index}>
+                      {applications.items.map((application: any) => (
+                        <tr key={application.item.id} className="border-b border-The-julge-gray-20">
                           <td className="px-[12px] py-[20px]">{application.item.user.item.name}</td>
-                          <td>{application.item.user.item.id}</td>
-                          <td>{application.item.user.item.phone}</td>
-                          <td>{application.item.status}</td>
+                          <td className="px-[12px] py-[20px]">{application.item.user.item.bio}</td>
+                          <td className="px-[12px] py-[20px]">{application.item.user.item.phone}</td>
+                          <td className="px-[12px] py-[20px]">
+                            {application.item.status === 'pending' && (
+                              <div className="flex flex-row items-center gap-[12px]">
+                                <button
+                                  className="bg-white text-The-julge-primary border border-The-julge-primary px-4 py-2 rounded-md"
+                                  onClick={() => handleUpdateApplication('rejected', application.item.id)}>
+                                  거절하기
+                                </button>
+                                <button
+                                  className="mr-2 bg-white text-The-julge-blue-20 border border-The-julge-blue-20 px-4 py-2 rounded-md"
+                                  onClick={() => handleUpdateApplication('accepted', application.item.id)}>
+                                  승인하기
+                                </button>
+                              </div>
+                            )}
+                            {application.item.status === 'accepted' && <span>승인</span>}
+                            {application.item.status === 'rejected' && <span>거절</span>}
+                          </td>
                         </tr>
                       ))}
+                      <tr>
+                        <td colSpan={4} className="px-[12px] py-[15px]">
+                          <Pagination
+                            currentPage={page}
+                            totalPages={Math.ceil(applications.count / limit)}
+                            hasNext={applications.hasNext}
+                            noticeId={noticeId}
+                            onPageChange={handlePageChange}
+                          />
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
-                  <Pagination
-                    currentPage={Math.floor(offset / limit) + 1}
-                    totalPages={Math.ceil(applications.count / limit)}
-                    hasNext={applications.hasNext}
-                    noticeId={noticeId}
-                  />
                 </>
               ) : (
-                <p>신청자 없음</p>
+                <div className="flex flex-col items-center justify-center w-full h-[200px] text-The-julge-gray-50 text-[20px] gap-[20px]">
+                  <span>신청자가 없습니다.</span>
+                </div>
               )}
             </div>
           </div>
+          {showAlert && <Alert message={alertMessage} onClose={handleAlertClose} onConfirm={handleConfirm} />}
         </div>
       )}
     </>

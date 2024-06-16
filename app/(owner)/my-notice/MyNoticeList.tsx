@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShopData, NoticeDetailData } from '@/types';
-import { JobCard } from '@/components/JobCard';
+import { Notice } from '@/components/Notice';
 
 interface MyNoticeListProps {
   shopData: ShopData;
@@ -91,7 +91,7 @@ const MyNoticeList: React.FC<MyNoticeListProps> = ({ shopData }) => {
         <div className="flex flex-wrap gap-3.5">
           {noticeList.map(notice => (
             <div key={notice.item.id}>
-              <JobCard
+              <Notice
                 id={notice.item.id}
                 startsAt={notice.item.startsAt}
                 hourlyPay={notice.item.hourlyPay}

@@ -92,7 +92,7 @@ const MyNoticeForm = () => {
 
     // 등록/편집이 완료되었을 때 공고리스트로
     if (isSuccess) {
-      router.push('/my-notice');
+      router.push('/my-store');
       return;
     }
   };
@@ -155,7 +155,9 @@ const MyNoticeForm = () => {
               name="시급"
               placeholder="0"
               value={notice.item.hourlyPay}
-              onChange={e => setNotice({ ...notice, item: { ...notice.item, hourlyPay: parseInt(e.target.value) } })}
+              onChange={e =>
+                setNotice({ ...notice, item: { ...notice.item, hourlyPay: parseInt(e.target.value) || 0 } })
+              }
             />
           </div>
           <div className="w-[308px]">
@@ -168,7 +170,9 @@ const MyNoticeForm = () => {
               name="업무 시간"
               placeholder="0"
               value={notice.item.workhour}
-              onChange={e => setNotice({ ...notice, item: { ...notice.item, workhour: parseInt(e.target.value) } })}
+              onChange={e =>
+                setNotice({ ...notice, item: { ...notice.item, workhour: parseInt(e.target.value) || 0 } })
+              }
             />
           </div>
         </div>

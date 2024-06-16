@@ -1,4 +1,4 @@
-import axiosInstance from '@/app/api/lib/axios';
+import axiosInstance from '@/app/api/lib/axiosInstance';
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 import { NoticeFullDetailData } from '@/types';
