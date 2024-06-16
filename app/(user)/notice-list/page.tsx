@@ -295,7 +295,7 @@ export default function Page() {
               ))}
             </div>
           )}
-          <div className="flex w-100% px-3 justify-center items-center mt-[20px]">
+          <div className="flex w-100% px-3 justify-center items-center mt-[20px] mb-[100px]">
             <div className="flex items-center gap-[20px]">
               <button
                 className={`px-[12px] py-[8px] ${
