@@ -4,38 +4,17 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
-import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
-
-type Job = {
-  id: string;
-  description: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string; // shop_id
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
-};
+import { fetchJobDetails, fetchUserProfile, applyJob, fetchApplications, cancelJobApplication } from '@/utils/api';
+import { NoticeDetailData } from '@/types/notices';
 
 const JobDetail = () => {
   const [message, setMessage] = useState('');
   const [shopId, setShopId] = useState<string | null>(null);
   const [noticeId, setNoticeId] = useState<string | null>(null);
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<NoticeDetailData['item'] | null>(null);
   const [isApplied, setIsApplied] = useState(false);
   const [showCancelAlert, setShowCancelAlert] = useState(false);
+  const [isPastJob, setIsPastJob] = useState(false);
 
   useEffect(() => {
     const storedShopId = localStorage.getItem('shop_id');
@@ -51,6 +30,9 @@ const JobDetail = () => {
           if (data.currentUserApplication) {
             setIsApplied(true);
           }
+          const currentTime = new Date();
+          const jobStartTime = new Date(data.startsAt);
+          setIsPastJob(currentTime > jobStartTime);
         })
         .catch(error => console.error(error));
     }
@@ -120,11 +102,19 @@ const JobDetail = () => {
     }
 
     try {
-      const response = await cancelJobApplication(shopId!, noticeId!, userId, token);
+      const applications = await fetchApplications(shopId!, noticeId!, token);
+      const userApplication = applications.find((app: any) => app.item.user.item.id === userId);
 
-      if (response.status === 200) {
-        setMessage('지원 취소 성공');
-        setIsApplied(false);
+      if (userApplication) {
+        const applicationId = userApplication.item.id;
+        const response = await cancelJobApplication(shopId!, noticeId!, applicationId, token);
+
+        if (response.status === 200) {
+          setMessage('지원 취소 성공');
+          setIsApplied(false);
+        }
+      } else {
+        setMessage('지원 내역을 찾을 수 없습니다');
       }
     } catch (error: any) {
       setMessage('지원 취소 실패');
@@ -136,26 +126,10 @@ const JobDetail = () => {
     setMessage('');
   };
 
-  const handleSetTestData = () => {
-    const testShopId = '07a6a12c-7ca6-4dc2-9342-b7b6209bd9b5'; // 테스트용 임의의 가게 ID
-    const testNoticeId = '98e8edd5-44be-4334-b53a-20c2eac7657a'; // 테스트용 임의의 공고 ID
-    localStorage.setItem('shop_id', testShopId);
-    localStorage.setItem('notice_id', testNoticeId);
-    setShopId(testShopId);
-    setNoticeId(testNoticeId);
-
-    fetchJobDetails(testShopId, testNoticeId)
-      .then(data => setJob(data))
-      .catch(error => console.error(error));
-  };
-
   if (!job)
     return (
       <div>
         <p>Loading...</p>
-        <button onClick={handleSetTestData} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md">
-          테스트용 데이터
-        </button>
       </div>
     );
 
@@ -179,21 +153,31 @@ const JobDetail = () => {
           <h2 className="text-orange-600 text-base font-bold">{shop.category}</h2>
           <h1 className="text-gray-900 text-2xl font-bold mb-6">{shop.name}</h1>
           <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
-            <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden">
+            <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden relative">
               <Image
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${isPastJob || job.closed ? 'opacity-50' : ''}`}
                 src={shop.imageUrl}
                 alt={shop.name}
                 width={597}
                 height={543}
               />
+              {job.closed && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <span className="text-white text-2xl font-bold">마감 완료</span>
+                </div>
+              )}
+              {isPastJob && !job.closed && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <span className="text-white text-2xl font-bold">지난 공고</span>
+                </div>
+              )}
             </div>
             <div className="flex flex-col justify-between w-full lg:w-1/2">
               <div>
                 <h3 className="text-orange-600 text-base font-bold">시급</h3>
                 <div className="flex items-center gap-4 mt-2">
-                  <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString()}원</span>
-                  <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
+                  <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString('ko-KR')}원</span>
+                  <div className="bg-[#EA3C12] text-white text-sm rounded-full flex items-center p-2">
                     <span>기존 시급보다 {((job.hourlyPay / shop.originalHourlyPay) * 100).toFixed(0)}%</span>
                     <div className="w-5 h-5 relative">
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -250,10 +234,17 @@ const JobDetail = () => {
                       취소하기
                     </div>
                   </button>
+                ) : job.closed || isPastJob ? (
+                  <button
+                    type="button"
+                    className="w-full bg-gray-400 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo'] cursor-not-allowed"
+                    disabled>
+                    신청 불가
+                  </button>
                 ) : (
                   <button
                     type="button"
-                    className="w-full bg-orange-600 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
+                    className="w-full bg-[#EA3C12] text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
                     onClick={handleApply}>
                     신청하기
                   </button>

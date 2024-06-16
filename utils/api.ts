@@ -1,29 +1,8 @@
 import axios from 'axios';
+import { NoticeDetailData } from '@/types/notices';
 
-type Job = {
-  id: string;
-  description: string;
-  startsAt: string;
-  hourlyPay: number;
-  workhour: number;
-  closed: boolean;
-  shop: {
-    item: {
-      id: string; // shop_id
-      name: string;
-      category: string;
-      address1: string;
-      address2: string;
-      description: string;
-      imageUrl: string;
-      originalHourlyPay: number;
-    };
-    href: string;
-  };
-  currentUserApplication: any | null;
-};
 
-export const fetchJobDetails = async (shopId: string, jobId: string): Promise<Job> => {
+export const fetchJobDetails = async (shopId: string, jobId: string): Promise<NoticeDetailData['item']> => {
   try {
     const response = await axios.get(
       `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${jobId}`,
@@ -67,10 +46,27 @@ export const applyJob = async (shopId: string, noticeId: string, token: string) 
   }
 };
 
-export const cancelJobApplication = async (shopId: string, noticeId: string, userId: string, token: string) => {
+export const fetchApplications = async (shopId: string, noticeId: string, token: string) => {
+  try {
+    const response = await axios.get(
+      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.items;
+  } catch (error: any) {
+    console.error('Failed to load applications', error);
+    throw new Error('Failed to load applications');
+  }
+};
+
+export const cancelJobApplication = async (shopId: string, noticeId: string, applicationId: string, token: string) => {
   try {
     const response = await axios.put(
-      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications/${userId}`,
+      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications/${applicationId}`,
       { status: 'canceled' },
       {
         headers: {
@@ -84,3 +80,4 @@ export const cancelJobApplication = async (shopId: string, noticeId: string, use
     throw error;
   }
 };
+
