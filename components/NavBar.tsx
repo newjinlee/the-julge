@@ -3,17 +3,30 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSearch } from '@/context/SearchContext';
 
 export function NavBar() {
   // State to hold the user type
   const [userType, setUserType] = useState('');
   const router = useRouter();
+  const { searchShopValue, setSearchShopValue } = useSearch();
+  const [inputValue, setInputValue] = useState('');
 
   // Effect to update userType based on local storage value
   useEffect(() => {
     const type = localStorage.getItem('userType');
     setUserType(type || '');
   }, []);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      setSearchShopValue(inputValue);
+    }
+  };
 
   const handleLogOut = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -49,7 +62,14 @@ export function NavBar() {
               style={{ width: '20px', height: '20px' }}
               alt="search icon"
             />
-            <input type="text" placeholder="가게 이름으로 찾아보세요." className="bg-gray-200 w-full" />
+            <input
+              type="text"
+              placeholder="가게 이름으로 찾아보세요."
+              className="bg-gray-200 w-full"
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleSearch}
+            />
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import localfont from 'next/font/local';
 import './globals.css';
+import { SearchProvider } from '../context/SearchContext';
 
 const inter = Inter({ subsets: ['latin'] });
 const Spoqa = localfont({
@@ -22,7 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body className={`${Spoqa.variable}`}>{children}</body>
+      <SearchProvider>
+        <body className={`${Spoqa.variable}`}>{children}</body>
+      </SearchProvider>
     </html>
   );
 }
