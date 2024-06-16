@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
-import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
+import { fetchJobDetails, fetchUserProfile, applyJob, fetchApplications, cancelJobApplication } from '@/utils/api';
 import { NoticeDetailData } from '@/types/notices';
 
 const JobDetail = () => {
@@ -102,11 +102,19 @@ const JobDetail = () => {
     }
 
     try {
-      const response = await cancelJobApplication(shopId!, noticeId!, userId, token);
+      const applications = await fetchApplications(shopId!, noticeId!, token);
+      const userApplication = applications.find((app: any) => app.item.user.item.id === userId);
 
-      if (response.status === 200) {
-        setMessage('지원 취소 성공');
-        setIsApplied(false);
+      if (userApplication) {
+        const applicationId = userApplication.item.id;
+        const response = await cancelJobApplication(shopId!, noticeId!, applicationId, token);
+
+        if (response.status === 200) {
+          setMessage('지원 취소 성공');
+          setIsApplied(false);
+        }
+      } else {
+        setMessage('지원 내역을 찾을 수 없습니다');
       }
     } catch (error: any) {
       setMessage('지원 취소 실패');
@@ -169,7 +177,7 @@ const JobDetail = () => {
                 <h3 className="text-orange-600 text-base font-bold">시급</h3>
                 <div className="flex items-center gap-4 mt-2">
                   <span className="text-2xl font-bold text-gray-900">{job.hourlyPay.toLocaleString('ko-KR')}원</span>
-                  <div className="bg-orange-600 text-white text-sm rounded-full flex items-center p-2">
+                  <div className="bg-[#EA3C12] text-white text-sm rounded-full flex items-center p-2">
                     <span>기존 시급보다 {((job.hourlyPay / shop.originalHourlyPay) * 100).toFixed(0)}%</span>
                     <div className="w-5 h-5 relative">
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -236,7 +244,7 @@ const JobDetail = () => {
                 ) : (
                   <button
                     type="button"
-                    className="w-full bg-orange-600 text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
+                    className="w-full bg-[#EA3C12] text-white py-3 rounded-md font-bold font-['Spoqa Han Sans Neo']"
                     onClick={handleApply}>
                     신청하기
                   </button>

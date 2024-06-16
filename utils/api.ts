@@ -46,10 +46,27 @@ export const applyJob = async (shopId: string, noticeId: string, token: string) 
   }
 };
 
-export const cancelJobApplication = async (shopId: string, noticeId: string, userId: string, token: string) => {
+export const fetchApplications = async (shopId: string, noticeId: string, token: string) => {
+  try {
+    const response = await axios.get(
+      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.items;
+  } catch (error: any) {
+    console.error('Failed to load applications', error);
+    throw new Error('Failed to load applications');
+  }
+};
+
+export const cancelJobApplication = async (shopId: string, noticeId: string, applicationId: string, token: string) => {
   try {
     const response = await axios.put(
-      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications/${userId}`,
+      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${noticeId}/applications/${applicationId}`,
       { status: 'canceled' },
       {
         headers: {
@@ -63,3 +80,4 @@ export const cancelJobApplication = async (shopId: string, noticeId: string, use
     throw error;
   }
 };
+
