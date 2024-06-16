@@ -36,7 +36,7 @@ export default function Page() {
 
   useEffect(() => {
     async function getApplyData() {
-      const response = await axiosInstance.get(
+      const response = await axios.get(
         `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
         {
           headers: {
@@ -47,6 +47,7 @@ export default function Page() {
       );
       setApplyData(response);
       setApplyNum(response.data.count);
+      localStorage.setItem('applynum', response.data.count);
     }
   });
 
@@ -60,7 +61,7 @@ export default function Page() {
       )}
       <div className="mb-[150px]"></div>
 
-      {applynNum >= 1 ? <RegisterPagination></RegisterPagination> : <JobApplication></JobApplication>}
+      {applynNum >= 0 ? <RegisterPagination></RegisterPagination> : <JobApplication></JobApplication>}
     </>
   );
 }
