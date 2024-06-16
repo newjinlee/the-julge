@@ -214,116 +214,122 @@ export default function Page() {
 
   return (
     <>
-      <div className="flex flex-col items-start w-100% px-[238px] py-[60px] bg-[var(--The-julge-red-10,#FFEBE7)] gap-[32px]">
-        <h1 className=" text-[28px] font-bold leading-normal tracking-[0.56px] text-[var(--The-julge-black,#111322)]">
-          맞춤 공고
-        </h1>
-        {jobs && (
-          <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {displayedMatchedJobs.map(item => (
-              <Link href={`/notice-list//notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
-                <JobCard
-                  id={item.item.id}
-                  startsAt={item.item.startsAt}
-                  hourlyPay={item.item.hourlyPay}
-                  workhour={item.item.workhour}
-                  closed={item.item.closed}
-                  shop={item.item.shop}
-                />
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col w-100% px-[238px] py-[60px] gap-[40px]">
-        <div className="flex justify-between">
-          <h1 className="text-[var(--The-julge-black,#111322)] font-['Spoqa Han Sans Neo'] text-[28px] font-bold leading-normal tracking-[0.56px]">
-            전체 공고
+      <div className="flex flex-col w-100% px-8 py-10 items-start bg-[#FFEBE7] xl:px-[238px] xl:py-[60px]">
+        <div className="mx-auto">
+          <h1 className="font-['Spoqa_Han_Sans_Neo'] text-[20px] font-bold leading-normal text-[var(--The-julge-black,#111322)] md:text-[28px] md:tracking-[0.56px]">
+            맞춤 공고
           </h1>
-          <div className="inline-flex items-start gap-[10px]">
-            <button
-              className="flex h-[30px] p-3 items-center gap-6 rounded-[5px] bg-[#F2F2F3]"
-              onClick={toggleDropdown}>
-              {selectedOption}
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute mt-[30px] bg-[#F2F2F3] rounded-[5px] shadow-md z-10">
-                <button
-                  className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
-                  onClick={() => handleOptionSelect('마감임박순')}>
-                  마감임박순
-                </button>
-                <button
-                  className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
-                  onClick={() => handleOptionSelect('시급 많은 순')}>
-                  시급 많은 순
-                </button>
-                <button
-                  className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
-                  onClick={() => handleOptionSelect('시간 적은 순')}>
-                  시간 적은 순
-                </button>
-                <button
-                  className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
-                  onClick={() => handleOptionSelect('가나다 순')}>
-                  가나다 순
-                </button>
-              </div>
-            )}
-            <button className="flex h-[30px] p-3 items-center gap-6 rounded-[5px] bg-[#FF8D72]">상세 필터</button>
-          </div>
+          {jobs && (
+            <div className="grid grid-cols-3 gap-[15px] justify-start">
+              {displayedMatchedJobs.map(item => (
+                <Link href={`/notice-list//notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+                  <JobCard
+                    id={item.item.id}
+                    startsAt={item.item.startsAt}
+                    hourlyPay={item.item.hourlyPay}
+                    workhour={item.item.workhour}
+                    closed={item.item.closed}
+                    shop={item.item.shop}
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
-        {jobs && (
-          <div className="grid grid-cols-3 gap-[14px] justify-start">
-            {jobsForCurrentPage.map(item => (
-              <Link href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
-                <JobCard
-                  key={item.item.id}
-                  id={item.item.id}
-                  startsAt={item.item.startsAt}
-                  hourlyPay={item.item.hourlyPay}
-                  workhour={item.item.workhour}
-                  closed={item.item.closed}
-                  shop={item.item.shop}
-                />
-              </Link>
-            ))}
-          </div>
-        )}
-        <div className="flex w-100% px-3 justify-center items-center">
-          <div className="flex items-center gap-[20px]">
-            <button
-              className={`px-[12px] py-[8px] ${
-                currentPage <= 1
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)]'
-              }`}
-              onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
-              disabled={currentPage <= 1}>
-              &lt;
-            </button>
-            {getDisplayedPages().map(page => (
+      </div>
+      <div className="flex flex-col items-start w-100% px-[12px] py-[40px] gap-[8px] bg-[#FAFAFA)] xl:px-[238px] xl:py-[60px]">
+        <div className="mx-auto w-100%">
+          <div className="flex flex-col md:flex-row justify-between w-100% gap-[16px]">
+            <h1 className="font-['Spoqa_Han_Sans_Neo'] text-[20px] font-bold leading-normal text-[var(--The-julge-black,#111322)] md:text-[28px] md:tracking-[0.56px]">
+              전체 공고
+            </h1>
+            <div className="inline-flex items-start gap-[10px]">
               <button
-                key={page}
-                className={`flex w-[40px] h-[40px] justify-center items-center rounded-[4px] ${
-                  currentPage === page
-                    ? 'bg-[var(--The-julge-red,#FF5A47)] text-[var(--The-julge-white,#FFF)] font-spoqa text-[14px] font-normal leading-[22px]'
-                    : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)] font-spoqa text-[14px] font-normal leading-[22px]'
-                }`}
-                onClick={() => handlePageChange(page)}>
-                {page}
+                className="flex h-[30px] items-center px-[12px] gap-[6px] rounded-[5px] bg-[var(--The-julge-gray-10,#F2F2F3)] mb-[20px]"
+                onClick={toggleDropdown}>
+                {selectedOption}
               </button>
-            ))}
-            <button
-              className={`px-[12px] py-[8px] ${
-                currentPage >= totalPages
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)]'
-              }`}
-              onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}>
-              &gt;
-            </button>
+              {isDropdownOpen && (
+                <div className="absolute mt-[30px] bg-[#F2F2F3] rounded-[5px] shadow-md z-10">
+                  <button
+                    className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
+                    onClick={() => handleOptionSelect('마감임박순')}>
+                    마감임박순
+                  </button>
+                  <button
+                    className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
+                    onClick={() => handleOptionSelect('시급 많은 순')}>
+                    시급 많은 순
+                  </button>
+                  <button
+                    className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
+                    onClick={() => handleOptionSelect('시간 적은 순')}>
+                    시간 적은 순
+                  </button>
+                  <button
+                    className="block w-full text-left p-3 hover:bg-[#E0E0E0]"
+                    onClick={() => handleOptionSelect('가나다 순')}>
+                    가나다 순
+                  </button>
+                </div>
+              )}
+              <button className="flex h-[30px] items-center px-[12px] gap-[6px] rounded-[5px] bg-[#FF8D72]">
+                상세 필터
+              </button>
+            </div>
+          </div>
+          {jobs && (
+            <div className="grid grid-cols-3 gap-[15px] justify-start">
+              {jobsForCurrentPage.map(item => (
+                <Link href={`/notice-list/notice-detail/${item.item.shop.item.id}/${item.item.id}`} key={item.item.id}>
+                  <JobCard
+                    key={item.item.id}
+                    id={item.item.id}
+                    startsAt={item.item.startsAt}
+                    hourlyPay={item.item.hourlyPay}
+                    workhour={item.item.workhour}
+                    closed={item.item.closed}
+                    shop={item.item.shop}
+                  />
+                </Link>
+              ))}
+            </div>
+          )}
+          <div className="flex w-100% px-3 justify-center items-center mt-[20px]">
+            <div className="flex items-center gap-[20px]">
+              <button
+                className={`px-[12px] py-[8px] ${
+                  currentPage <= 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)]'
+                }`}
+                onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                disabled={currentPage <= 1}>
+                &lt;
+              </button>
+              {getDisplayedPages().map(page => (
+                <button
+                  key={page}
+                  className={`flex w-[40px] h-[40px] justify-center items-center rounded-[4px] ${
+                    currentPage === page
+                      ? 'bg-[var(--The-julge-red,#FF5A47)] text-[var(--The-julge-white,#FFF)] font-spoqa text-[14px] font-normal leading-[22px]'
+                      : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)] font-spoqa text-[14px] font-normal leading-[22px]'
+                  }`}
+                  onClick={() => handlePageChange(page)}>
+                  {page}
+                </button>
+              ))}
+              <button
+                className={`px-[12px] py-[8px] ${
+                  currentPage >= totalPages
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'bg-[var(--The-julge-white,#FFF)] text-[var(--The-julge-black,#111322)]'
+                }`}
+                onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}>
+                &gt;
+              </button>
+            </div>
           </div>
         </div>
       </div>

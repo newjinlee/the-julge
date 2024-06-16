@@ -61,7 +61,7 @@ export function JobCard({
   const startsTime = convertToKoreanTime(startsAt, workhour);
   return (
     <div
-      className={`flex flex-col w-[312px] h-[349px] gap-[20px] p-[16px] rounded-[12px] border ${
+      className={`flex flex-col w-[171px] md:w-[312px] h-[261px] md:h-[349px] gap-[12px] md:gap-[20px] p-[12px] md:p-[16px] rounded-[12px] border ${
         closed
           ? 'border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-gray-10,#F4F4F5)]'
           : 'border-[var(--The-julge-gray-20,#E5E4E7)] bg-[var(--The-julge-white,#FFF)]'
@@ -82,30 +82,39 @@ export function JobCard({
           </p>
         )}
       </div>
-      <div className="flex-col flex gap-[8px]">
-        <h1 className={`text-[20px] font-semibold ${closed ? 'text-[#A3A3A3]' : ''}`}>{shop.item.name}</h1>
+      <div className="flex flex-col items-start gap-2 self-stretch">
+        <h1
+          className={`font-['Spoqa Han Sans Neo'] font-bold text-base leading-5 md:text-xl ${closed ? 'text-[#A3A3A3]' : ''}`}>
+          {shop.item.name}
+        </h1>
         <div className="h-[22px] flex gap-[6px] items-center">
           <Image src="/clock-icon.png" height={20} width={20} alt="clock icon"></Image>
-          <h1 className={`text-[14px] ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+          <h1
+            className={`flex-1 font-['Spoqa Han Sans Neo'] text-xs font-normal leading-4 md:text-sm md:leading-6 ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
             {startsTime} ({workhour}시간)
           </h1>
         </div>
         <div className="h-[22px] flex gap-[6px] items-center">
           <Image src="/location-icon.svg" height={20} width={20} alt="location icon"></Image>
-          <h1 className={`text-[14px] ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+          <h1
+            className={`font-['Spoqa Han Sans Neo'] text-xs font-normal leading-4 md:text-sm md:leading-6 ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
             {shop.item.address1}
           </h1>
         </div>
       </div>
-      <div className="flex w-full justify-between">
-        <h1 className={`text-[24px] font-semibold ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
+      <div className="flex flex-col md:flex-row w-full justify-between md:items-center md:self-stretch">
+        <h1
+          className={`font-['Spoqa Han Sans Neo'] text-lg font-bold leading-4 md:text-2xl md:leading-6 ${closed ? 'text-[var(--The-julge-gray-50,#A3A3A3)]' : ''}`}>
           {hourlyPay.toLocaleString()}원
         </h1>
         {hourlyPay > shop.item.originalHourlyPay && (
-          <div
-            className={`flex justify-center items-center w-[159px] h-[36px] ${closed ? 'bg-[#E5E4E7]' : 'bg-red-400'} text-[14px] px-[12px] gap-[3px] text-white rounded-3xl`}>
-            <h1>기존 시급보다 {((hourlyPay / shop.item.originalHourlyPay) * 100).toFixed(0)}%</h1>
-            <Image src="/arrow-up-icon.svg" height={14} width={14} alt="arrow up icon"></Image>
+          <div className="flex items-center gap-0.5">
+            <h1
+              className={`text-[#FF4040] md:text-[#FFF] font-['Spoqa Han Sans Neo'] h-[5px] text-xs font-normal leading-4 ${closed ? 'md:bg-[#E5E4E7]' : 'md:bg-red-400'}
+              md:flex md:h-9 md:px-3 md:items-center md:gap-1.5 md:rounded-full`}>
+              기존 시급보다 {((hourlyPay / shop.item.originalHourlyPay) * 100).toFixed(0)}%
+              <Image src="/arrow-up-icon.svg" height={14} width={14} alt="arrow up icon"></Image>
+            </h1>
           </div>
         )}
       </div>
