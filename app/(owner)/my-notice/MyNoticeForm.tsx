@@ -92,7 +92,7 @@ const MyNoticeForm = () => {
 
     // 등록/편집이 완료되었을 때 공고리스트로
     if (isSuccess) {
-      router.push('/my-notice');
+      router.push('/my-store');
       return;
     }
   };

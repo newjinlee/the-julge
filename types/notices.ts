@@ -35,7 +35,7 @@ export interface NoticeDetailData {
 export interface Applications {
   count: number; // 전체 개수
   hasNext: boolean; // 다음 내용 존재 여부
-  items: {
+  items: Array<{
     item: {
       createdAt: 'string';
       id: string;
@@ -52,7 +52,7 @@ export interface Applications {
         };
       };
     };
-  };
+  }>;
   limit: number;
   offset: number;
 }
