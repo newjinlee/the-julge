@@ -52,7 +52,8 @@ const MyStoreInfo: React.FC<MyStoreInfoProps> = ({ shopData }) => {
               <div className="flex flex-row gap-[8px]">
                 <button
                   type="button"
-                  className="w-full bg-white text-The-julge-primary py-3 rounded-md font-bold border border-The-julge-primary">
+                  className="w-full bg-white text-The-julge-primary py-3 rounded-md font-bold border border-The-julge-primary"
+                  onClick={() => router.push('/my-store/my-store-edit')}>
                   편집하기
                 </button>
                 <button

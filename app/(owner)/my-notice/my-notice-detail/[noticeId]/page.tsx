@@ -66,12 +66,6 @@ const MyNoticeDetail = () => {
     setShowAlert(false);
   };
 
-  // ------------------------------------ test
-  const handleClick = () => {
-    console.log(noticeFullDetail);
-  };
-  // ------------------------------------ test
-
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
@@ -94,14 +88,16 @@ const MyNoticeDetail = () => {
         throw new Error(errorResponse.error || 'fail to register/update notice');
       }
 
-      setStatus('');
-      setApplicationId('');
+      handleAlertClose();
       toast.success(`${confirmMessage} 완료`);
-      console.log(`${confirmMessage}완료`);
     } catch (error: any) {
       console.error('Error', error);
       handleAlertClose();
       toast.error(error.message);
+    } finally {
+      setTimeout(() => {
+        router.push('/my-store');
+      }, 1500); // 1초 후에 페이지 이동
     }
   };
 
@@ -145,7 +141,6 @@ const MyNoticeDetail = () => {
     <>
       {noticeFullDetail && (
         <div className="box-border border-none text-decoration-none select-none outline-none font-inherit align-baseline relative max-w-[964px] h-full mx-auto py-16">
-          <button onClick={handleClick}>test</button>
           <div className="w-full flex flex-col items-start gap-8 mb-[60px]">
             <div className="w-full">
               <h2 className="text-orange-600 text-base font-bold">{noticeFullDetail.item.shop.item.category}</h2>
@@ -253,7 +248,7 @@ const MyNoticeDetail = () => {
                       {applications.items.map((application: any) => (
                         <tr key={application.item.id} className="border-b border-The-julge-gray-20">
                           <td className="px-[12px] py-[20px]">{application.item.user.item.name}</td>
-                          <td className="px-[12px] py-[20px]">{application.item.id}</td>
+                          <td className="px-[12px] py-[20px]">{application.item.user.item.bio}</td>
                           <td className="px-[12px] py-[20px]">{application.item.user.item.phone}</td>
                           <td className="px-[12px] py-[20px]">
                             {application.item.status === 'pending' && (
@@ -290,7 +285,9 @@ const MyNoticeDetail = () => {
                   </table>
                 </>
               ) : (
-                <p>신청자 없음</p>
+                <div className="flex flex-col items-center justify-center w-full h-[200px] text-The-julge-gray-50 text-[20px] gap-[20px]">
+                  <span>신청자가 없습니다.</span>
+                </div>
               )}
             </div>
           </div>
