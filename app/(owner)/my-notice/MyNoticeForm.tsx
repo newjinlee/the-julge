@@ -135,6 +135,14 @@ const MyNoticeForm = () => {
     }
   };
 
+  const handelRedirect = () => {
+    if (noticeId) {
+      router.push(`/my-notice/my-notice-detail/${noticeId}`);
+    } else {
+      router.push('/my-store');
+    }
+  };
+
   return (
     <div className="relative px-[12px] py-[60px] max-w-[964px] h-full mx-auto">
       <h1 className="font-bold text-2xl mb-7">공고등록</h1>
@@ -144,10 +152,10 @@ const MyNoticeForm = () => {
             <CustomInput
               label="시급*"
               unit="원"
+              name="시급"
               placeholder="0"
               value={notice.item.hourlyPay}
               onChange={e => setNotice({ ...notice, item: { ...notice.item, hourlyPay: parseInt(e.target.value) } })}
-              className="border px-[20px] py-[16px] h-[58px] w-[308px]"
             />
           </div>
           <div className="w-[308px]">
@@ -157,16 +165,17 @@ const MyNoticeForm = () => {
             <CustomInput
               label="업무 시간*"
               unit="시간"
+              name="업무 시간"
               placeholder="0"
               value={notice.item.workhour}
               onChange={e => setNotice({ ...notice, item: { ...notice.item, workhour: parseInt(e.target.value) } })}
-              className="border px-[20px] py-[16px] h-[58px] w-[308px]"
             />
           </div>
         </div>
         <div>
           <CustomTextarea
             label="공고 설명"
+            name="공고 설명"
             placeholder="공고 설명을 적어주세요."
             value={notice.item.description}
             onChange={e => setNotice({ ...notice, item: { ...notice.item, description: e.target.value } })}
@@ -176,7 +185,7 @@ const MyNoticeForm = () => {
           <button
             type="button"
             className="flex justify-center w-[312px] py-[14px] bg-The-julge-gray-40 text-white"
-            onClick={() => router.push('/my-notice')}>
+            onClick={handelRedirect}>
             돌아가기
           </button>
           <button type="submit" className="flex justify-center w-[312px] py-[14px] bg-The-julge-red-40 text-white">
