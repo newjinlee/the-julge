@@ -41,7 +41,7 @@ export function NavBar() {
               priority
             />
           </Link>
-          <div className="flex items-center gap-[10px] bg-gray-200 w-[450px] h-[40px] rounded-lg px-3 text-[14px]">
+          <div className="hidden md:flex items-center gap-[10px] bg-gray-200 lg:w-[450px] w-[350px] h-[40px] rounded-lg px-3 text-[14px]">
             <Image
               src="/search-icon.png"
               height={20}
@@ -66,7 +66,8 @@ export function NavBar() {
                   width={20}
                   height={20}
                   style={{ width: '20px', height: '20px' }}
-                  alt="notify"></Image>
+                  alt="notify"
+                />
               </Link>
             </>
           )}
@@ -82,7 +83,8 @@ export function NavBar() {
                   width={20}
                   height={20}
                   style={{ width: '20px', height: '20px' }}
-                  alt="notify"></Image>
+                  alt="notify"
+                />
               </Link>
             </>
           )}
