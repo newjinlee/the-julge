@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import useShopData from '@/app/hooks/useShopData';
 import { NoticeFullDetailData, Applications } from '@/types';
 import useNoticeFullDetail from '@/app/hooks/useNoticeFullDetail';
@@ -10,18 +10,14 @@ import Pagination from '@/components/Pagination';
 
 const MyNoticeDetail = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = parseInt(searchParams.get('page') || '1');
-
   const { noticeId } = useParams();
-
-  const [shopId, setShopId] = useState<string | ''>('');
 
   const [noticeFullDetail, setNoticeFullDetail] = useState<NoticeFullDetailData>();
   const [applications, setApplications] = useState<Applications>();
 
   const limit = 5;
-  const [offset, setOffset] = useState((page - 1) * limit);
+  const [page, setPage] = useState(1);
+  const offset = (page - 1) * limit;
 
   useEffect(() => {
     const userId = localStorage.getItem('userId');
@@ -33,7 +29,6 @@ const MyNoticeDetail = () => {
     const fetchNoticeDetail = async () => {
       try {
         const shop = await useShopData(userId);
-        setShopId(shop.item.id);
         const detail: NoticeFullDetailData = await useNoticeFullDetail(shop.item.id, noticeId, offset, limit);
         setNoticeFullDetail(detail);
         setApplications(detail.item.currentUserApplication);
@@ -45,8 +40,14 @@ const MyNoticeDetail = () => {
     fetchNoticeDetail();
   }, [noticeId, offset]);
 
+  // ------------------------------------ test
   const handleClick = () => {
-    console.log(page);
+    console.log(applications);
+  };
+  // ------------------------------------ test
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
   };
 
   const formatNumber = (num: number) => {
@@ -193,10 +194,11 @@ const MyNoticeDetail = () => {
                     </tbody>
                   </table>
                   <Pagination
-                    currentPage={Math.floor(offset / limit) + 1}
+                    currentPage={page}
                     totalPages={Math.ceil(applications.count / limit)}
                     hasNext={applications.hasNext}
                     noticeId={noticeId}
+                    onPageChange={handlePageChange}
                   />
                 </>
               ) : (
