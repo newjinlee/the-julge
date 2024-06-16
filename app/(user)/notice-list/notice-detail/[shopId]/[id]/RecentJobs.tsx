@@ -5,10 +5,10 @@ import { useRouter, usePathname } from 'next/navigation';
 import JobCardForRecentSearch from '@/components/JobCardForRecentSearch';
 import { getRecentJobs, saveRecentJob } from '@/utils/localStorageHelper';
 import { fetchJobDetails } from '@/utils/api';
-import { Job } from '@/types/job'
+import { NoticeDetailData } from '@/types/notices';
 
 const RecentJobs = () => {
-  const [recentJobs, setRecentJobs] = useState<Job[]>([]);
+  const [recentJobs, setRecentJobs] = useState<NoticeDetailData['item'][]>([]);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -26,7 +26,7 @@ const RecentJobs = () => {
           }
         }),
       );
-      setRecentJobs(jobsWithDetails.filter(job => job !== null) as Job[]);
+      setRecentJobs(jobsWithDetails.filter(job => job !== null) as NoticeDetailData['item'][]);
     };
 
     loadRecentJobs();
@@ -56,7 +56,7 @@ const RecentJobs = () => {
     };
   }, [pathname, router]);
 
-  const handleClick = (job: Job) => {
+  const handleClick = (job: NoticeDetailData['item']) => {
     localStorage.setItem('notice_id', job.id);
     localStorage.setItem('shop_id', job.shop.item.id);
     router.push(`/notice-list/notice-detail/${job.shop.item.id}/${job.id}`);

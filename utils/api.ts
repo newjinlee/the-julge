@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { Job } from '../types/job'
+import { NoticeDetailData } from '@/types/notices';
 
-export const fetchJobDetails = async (shopId: string, jobId: string): Promise<Job> => {
+
+export const fetchJobDetails = async (shopId: string, jobId: string): Promise<NoticeDetailData['item']> => {
   try {
     const response = await axios.get(
       `https://bootcamp-api.codeit.kr/api/5-7/the-julge/shops/${shopId}/notices/${jobId}`,

@@ -5,13 +5,13 @@ import Image from 'next/image';
 import Alert from '@/components/AlertForApply';
 import AlertForApplyCancel from '@/components/AlertForApplyCancel';
 import { fetchJobDetails, fetchUserProfile, applyJob, cancelJobApplication } from '@/utils/api';
-import { Job } from '@/types/job';
+import { NoticeDetailData } from '@/types/notices';
 
 const JobDetail = () => {
   const [message, setMessage] = useState('');
   const [shopId, setShopId] = useState<string | null>(null);
   const [noticeId, setNoticeId] = useState<string | null>(null);
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<NoticeDetailData['item'] | null>(null);
   const [isApplied, setIsApplied] = useState(false);
   const [showCancelAlert, setShowCancelAlert] = useState(false);
   const [isPastJob, setIsPastJob] = useState(false);
