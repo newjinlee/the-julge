@@ -93,6 +93,7 @@ const MyNoticeForm = () => {
     // 등록/편집이 완료되었을 때 공고리스트로
     if (isSuccess) {
       router.push('/my-store');
+      // eslint-disable-next-line no-useless-return
       return;
     }
   };
@@ -156,6 +157,7 @@ const MyNoticeForm = () => {
               placeholder="0"
               value={notice.item.hourlyPay}
               onChange={e =>
+                // eslint-disable-next-line radix
                 setNotice({ ...notice, item: { ...notice.item, hourlyPay: parseInt(e.target.value) || 0 } })
               }
             />
@@ -171,6 +173,7 @@ const MyNoticeForm = () => {
               placeholder="0"
               value={notice.item.workhour}
               onChange={e =>
+                // eslint-disable-next-line radix
                 setNotice({ ...notice, item: { ...notice.item, workhour: parseInt(e.target.value) || 0 } })
               }
             />
