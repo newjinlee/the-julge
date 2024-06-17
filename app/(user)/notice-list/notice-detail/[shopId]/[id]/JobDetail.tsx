@@ -24,20 +24,19 @@ const JobDetail = () => {
     setNoticeId(storedNoticeId);
 
     if (storedShopId && storedNoticeId) {
-      fetchJobDetails(storedShopId, storedNoticeId)
-        .then(data => {
-          setJob(data);
-          const currentTime = new Date();
-          const jobStartTime = new Date(data.startsAt);
-          setIsPastJob(currentTime > jobStartTime);
+      fetchJobDetails(storedShopId, storedNoticeId).then(data => {
+        setJob(data);
+        const currentTime = new Date();
+        const jobStartTime = new Date(data.startsAt);
+        setIsPastJob(currentTime > jobStartTime);
 
-          if (data.currentUserApplication) {
-            setIsApplied(true);
-          } else {
-            checkIfUserApplied(storedShopId, storedNoticeId);
-          }
-        })
-        //.catch(error => console.error(error));
+        if (data.currentUserApplication) {
+          setIsApplied(true);
+        } else {
+          checkIfUserApplied(storedShopId, storedNoticeId);
+        }
+      });
+      //.catch(error => console.error(error));
     }
   }, []);
 
@@ -58,7 +57,7 @@ const JobDetail = () => {
         setIsApplied(true);
       }
     } catch (error) {
-      //console.error('Failed to fetch applications', error);
+      // console.error('Failed to fetch applications', error);
     }
   };
 
@@ -103,7 +102,7 @@ const JobDetail = () => {
       } else {
         setMessage('지원 등록 실패');
       }
-      //console.error(error);
+      // console.error(error);
     }
   };
 
@@ -133,7 +132,7 @@ const JobDetail = () => {
       }
     } catch (error: any) {
       setMessage('지원 취소 실패');
-      //console.error(error);
+      // console.error(error);
     }
   };
 
