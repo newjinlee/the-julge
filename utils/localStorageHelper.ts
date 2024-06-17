@@ -1,14 +1,19 @@
-import { NoticeDetailData } from '@/types/notices'
+import { NoticeDetailData } from '@/types/notices';
 
 export const saveRecentJob = (job: NoticeDetailData['item']) => {
-  const recentJobs: NoticeDetailData['item'][] = JSON.parse(localStorage.getItem('recentJobs') || '[]');
-  const updatedRecentJobs = [job, ...recentJobs.filter(j => j.id !== job.id)].slice(0, 6);
-  console.log('Saving jobs to localStorage:', updatedRecentJobs);
-  localStorage.setItem('recentJobs', JSON.stringify(updatedRecentJobs));
+  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    const recentJobs: NoticeDetailData['item'][] = JSON.parse(localStorage.getItem('recentJobs') || '[]');
+    const updatedRecentJobs = [job, ...recentJobs.filter(j => j.id !== job.id)].slice(0, 6);
+    console.log('Saving jobs to localStorage:', updatedRecentJobs);
+    localStorage.setItem('recentJobs', JSON.stringify(updatedRecentJobs));
+  }
 };
 
 export const getRecentJobs = (): NoticeDetailData['item'][] => {
-  const jobs = JSON.parse(localStorage.getItem('recentJobs') || '[]');
-  console.log('Getting jobs from localStorage:', jobs);
-  return jobs;
+  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    const jobs = JSON.parse(localStorage.getItem('recentJobs') || '[]');
+    console.log('Getting jobs from localStorage:', jobs);
+    return jobs;
+  }
+  return [];
 };

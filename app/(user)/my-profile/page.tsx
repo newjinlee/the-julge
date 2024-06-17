@@ -16,12 +16,14 @@ export default function Page() {
 
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-
+  
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId');
-    setToken(storedToken);
-    setUserId(storedUserId);
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
+      const storedUserId = localStorage.getItem('userId');
+      setToken(storedToken);
+      setUserId(storedUserId);
+    }
   }, []);
 
   useEffect(() => {
