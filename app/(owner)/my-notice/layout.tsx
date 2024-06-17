@@ -22,8 +22,8 @@ export default function layout({ children }: LayoutProps) {
       <main>
         <NavBar />
         {children}
-        <Footer></Footer>
         <ToastContainer position="top-center" style={customToastContainerStyle} />
+        {/* <Footer></Footer> */}
       </main>
     </div>
   );
