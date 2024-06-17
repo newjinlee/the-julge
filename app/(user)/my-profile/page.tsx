@@ -18,12 +18,10 @@ export default function Page() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedToken = localStorage.getItem('token');
-      const storedUserId = localStorage.getItem('userId');
-      setToken(storedToken);
-      setUserId(storedUserId);
-    }
+    const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+    setToken(storedToken);
+    setUserId(storedUserId);
   }, []);
 
   useEffect(() => {
