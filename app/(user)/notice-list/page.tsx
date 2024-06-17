@@ -6,6 +6,37 @@ import { JobCard } from '@/components/JobCard';
 import Link from 'next/link';
 import { useSearch } from '@/context/SearchContext';
 
+interface ShopItem {
+  id: string;
+  name: string;
+  category: string;
+  address1: string;
+  address2: string;
+  description: string;
+  imageUrl: string;
+  originalHourlyPay: number;
+}
+
+interface Shop {
+  item: ShopItem;
+  href: string;
+}
+
+interface JobItem {
+  id: string;
+  hourlyPay: number;
+  startsAt: string;
+  workhour: number;
+  description: string;
+  closed: boolean;
+  shop: Shop;
+}
+
+interface Job {
+  item: JobItem;
+  links: any[];
+}
+
 interface JobsResponse {
   offset: number;
   limit: number;
@@ -13,30 +44,7 @@ interface JobsResponse {
   hasNext: boolean;
   address: string[];
   keyword?: string;
-  items: {
-    item: {
-      id: string;
-      hourlyPay: number;
-      startsAt: string;
-      workhour: number;
-      description: string;
-      closed: boolean;
-      shop: {
-        item: {
-          id: string;
-          name: string;
-          category: string;
-          address1: string;
-          address2: string;
-          description: string;
-          imageUrl: string;
-          originalHourlyPay: number;
-        };
-        href: string;
-      };
-    };
-    links: any[];
-  }[];
+  items: Job[];
   links: {
     rel: string;
     description: string;
@@ -45,28 +53,34 @@ interface JobsResponse {
   }[];
 }
 
+interface UserShopItem {
+  id: string;
+  name: string;
+  category: string;
+  address1: string;
+  address2: string;
+  description: string;
+  imageUrl: string;
+  originalHourlyPay: number;
+}
+
+interface UserShop {
+  item: UserShopItem | null;
+}
+
+interface User {
+  id: string;
+  email: string;
+  type: 'employer' | 'employee';
+  name?: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
+  shop: UserShop;
+}
+
 interface UserResponse {
-  item: {
-    id: string;
-    email: string;
-    type: 'employer' | 'employee';
-    name?: string;
-    phone?: string;
-    address?: string;
-    bio?: string;
-    shop: {
-      item: {
-        id: string;
-        name: string;
-        category: string;
-        address1: string;
-        address2: string;
-        description: string;
-        imageUrl: string;
-        originalHourlyPay: number;
-      } | null;
-    };
-  };
+  item: User;
   links: any[];
 }
 
@@ -80,16 +94,12 @@ async function fetchJobs(
     const response: AxiosResponse<JobsResponse> = await axios.get(
       'https://bootcamp-api.codeit.kr/api/5-7/the-julge/notices',
       {
-        params: {
-          offset,
-          limit,
-          address,
-          keyword,
-        },
+        params: { offset, limit, address, keyword },
       },
     );
     return response.data;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
     throw error;
   }
@@ -102,6 +112,7 @@ async function fetchUserInfo(userId: string): Promise<UserResponse> {
     );
     return response.data;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(error);
     throw error;
   }
@@ -109,18 +120,14 @@ async function fetchUserInfo(userId: string): Promise<UserResponse> {
 
 export default function Page() {
   const [jobs, setJobs] = useState<JobsResponse | null>(null);
-  const [allJobs, setAllJobs] = useState<JobsResponse['items']>([]);
-  const [filteredJobs, setFilteredJobs] = useState<JobsResponse['items']>([]);
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('마감임박순');
   const [user, setUser] = useState<UserResponse | null>(null);
   const { searchShopValue } = useSearch();
-
-  if (searchShopValue) {
-    console.log(searchShopValue);
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,6 +137,7 @@ export default function Page() {
         setAllJobs(data.items);
         setTotalPages(Math.ceil(data.count / 6));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
     };
@@ -145,10 +153,10 @@ export default function Page() {
           setUser(data);
         }
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -162,7 +170,7 @@ export default function Page() {
     setCurrentPage(1); // Reset to the first page whenever the search changes
   }, [searchShopValue, allJobs]);
 
-  const sortJobs = (items, option) => {
+  const sortJobs = (items: Job[], option: string): Job[] => {
     switch (option) {
       case '시급 많은 순':
         return items.sort((a, b) => b.item.hourlyPay - a.item.hourlyPay);
@@ -176,7 +184,7 @@ export default function Page() {
     }
   };
 
-  const getDisplayedPages = () => {
+  const getDisplayedPages = (): number[] => {
     const pagesToShow = 6;
     let startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
     let endPage = startPage + pagesToShow - 1;
@@ -203,11 +211,10 @@ export default function Page() {
   };
 
   const sortedJobs = sortJobs([...filteredJobs], selectedOption);
-
   const jobsForCurrentPage = sortedJobs.slice((currentPage - 1) * 6, currentPage * 6);
 
   const matchedJobs = user
-    ? sortedJobs.filter(job => job.item.shop.item.address1.includes(user.item.address))
+    ? sortedJobs.filter(job => job.item.shop.item.address1.includes(user.item.address!))
     : sortedJobs.slice(0, 3);
 
   const displayedMatchedJobs = matchedJobs.length > 0 ? matchedJobs.slice(0, 3) : sortedJobs.slice(0, 3);
