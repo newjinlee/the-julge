@@ -18,10 +18,12 @@ export default function Page() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId');
-    setToken(storedToken);
-    setUserId(storedUserId);
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
+      const storedUserId = localStorage.getItem('userId');
+      setToken(storedToken);
+      setUserId(storedUserId);
+    }
   }, []);
 
   useEffect(() => {
@@ -61,7 +63,9 @@ export default function Page() {
           );
           setApplyData(response.data.items);
           setApplyNum(response.data.count);
-          localStorage.setItem('applynum', response.data.count);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('applynum', response.data.count);
+          }
         } catch (error) {
           console.error(error);
         }
