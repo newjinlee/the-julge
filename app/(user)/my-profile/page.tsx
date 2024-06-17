@@ -14,25 +14,32 @@ export default function Page() {
   const [applyData, setApplyData] = useState({});
   const [applyNum, setApplyNum] = useState(0);
 
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
   useEffect(() => {
-    const userId = localStorage.getItem('userId');
-    const token = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+    setToken(storedToken);
+    setUserId(storedUserId);
   }, []);
 
   useEffect(() => {
     async function getUserData() {
-      try {
-        const response = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setName(response.data.item.name);
-        setPhone(response.data.item.phone);
-        setAddress(response.data.item.address);
-        setBio(response.data.item.bio);
-      } catch (error) {
-        console.error(error);
+      if (userId && token) {
+        try {
+          const response = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setName(response.data.item.name);
+          setPhone(response.data.item.phone);
+          setAddress(response.data.item.address);
+          setBio(response.data.item.bio);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
 
@@ -41,21 +48,23 @@ export default function Page() {
 
   useEffect(() => {
     async function getApplyData() {
-      try {
-        const response = await axios.get(
-          `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+      if (userId && token) {
+        try {
+          const response = await axios.get(
+            `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              withCredentials: false,
             },
-            withCredentials: false,
-          },
-        );
-        setApplyData(response.data.items);
-        setApplyNum(response.data.count);
-        localStorage.setItem('applynum', response.data.count);
-      } catch (error) {
-        console.error(error);
+          );
+          setApplyData(response.data.items);
+          setApplyNum(response.data.count);
+          localStorage.setItem('applynum', response.data.count);
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
 
