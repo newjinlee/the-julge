@@ -29,7 +29,9 @@ export default function Page() {
         setPhone(response.data.item.phone);
         setAddress(response.data.item.address);
         setBio(response.data.item.bio);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     getUserData();
@@ -50,7 +52,9 @@ export default function Page() {
         setApplyData(response.data.items);
         setApplyNum(response.data.count);
         localStorage.setItem('applynum', response.data.count);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     getApplyData();

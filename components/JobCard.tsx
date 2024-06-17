@@ -19,21 +19,10 @@ type JobCardProps = {
     };
     href: string;
   };
-  currentUserApplication: any | null;
-  onClick: () => void;
 };
 
-export function JobCard({
-  id,
-  startsAt,
-  hourlyPay,
-  workhour,
-  closed = false,
-  shop,
-  currentUserApplication,
-  onClick,
-}: JobCardProps) {
-  function convertToKoreanTime(utcTime, workhour) {
+export function JobCard({ id, startsAt, hourlyPay, workhour, closed = false, shop }: JobCardProps) {
+  function convertToKoreanTime(utcTime: string, workhour: number): string {
     if (isNaN(Date.parse(utcTime))) {
       return 'Invalid time value';
     }
@@ -69,7 +58,7 @@ export function JobCard({
       onClick={handleSaveId}>
       <div className="flex justify-center items-center rounded-lg overflow-hidden relative">
         <Image
-          className={closed && `brightness-50`}
+          className={closed ? 'brightness-50' : ''}
           src={shop.item.imageUrl}
           height={310}
           width={282}

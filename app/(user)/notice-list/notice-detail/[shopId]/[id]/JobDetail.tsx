@@ -37,7 +37,7 @@ const JobDetail = () => {
             checkIfUserApplied(storedShopId, storedNoticeId);
           }
         })
-        .catch(error => console.error(error));
+        //.catch(error => console.error(error));
     }
   }, []);
 
@@ -58,7 +58,7 @@ const JobDetail = () => {
         setIsApplied(true);
       }
     } catch (error) {
-      console.error('Failed to fetch applications', error);
+      //console.error('Failed to fetch applications', error);
     }
   };
 
@@ -95,16 +95,7 @@ const JobDetail = () => {
             setMessage('로그인이 필요합니다');
             break;
           case 404:
-            const errorMessage = error.response.data.message;
-            if (errorMessage.includes('가게')) {
-              setMessage('존재하지 않는 가게입니다');
-            } else if (errorMessage.includes('공고')) {
-              setMessage('존재하지 않는 공고입니다');
-            } else if (errorMessage.includes('사용자')) {
-              setMessage('존재하지 않는 사용자입니다');
-            } else {
-              setMessage('알 수 없는 오류가 발생했습니다');
-            }
+            setMessage('알 수 없는 오류가 발생했습니다');
             break;
           default:
             setMessage('지원 등록 실패');
@@ -112,7 +103,7 @@ const JobDetail = () => {
       } else {
         setMessage('지원 등록 실패');
       }
-      console.error(error);
+      //console.error(error);
     }
   };
 
@@ -142,7 +133,7 @@ const JobDetail = () => {
       }
     } catch (error: any) {
       setMessage('지원 취소 실패');
-      console.error(error);
+      //console.error(error);
     }
   };
 

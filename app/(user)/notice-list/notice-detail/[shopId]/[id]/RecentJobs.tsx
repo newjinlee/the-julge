@@ -21,7 +21,6 @@ const RecentJobs = () => {
             const jobDetails = await fetchJobDetails(job.shop.item.id, job.id);
             return jobDetails;
           } catch (error) {
-            console.error(`Failed to fetch job details for job ${job.id}`, error);
             return null;
           }
         }),
@@ -43,7 +42,6 @@ const RecentJobs = () => {
         saveRecentJob(jobDetails);
         setRecentJobs(getRecentJobs());
       } catch (error) {
-        console.error('Failed to save recent job', error);
       }
     };
 
