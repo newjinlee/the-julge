@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import UserInput from './UserInput';
@@ -44,11 +43,6 @@ const addresses = [
 ];
 
 export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-  }, []);
-
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -60,22 +54,30 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
   const [address, setAddress] = useState('');
   const [bio, setBio] = useState('');
 
-  const handleFileChange = (file: File) => {
-    setFile(file);
-  };
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+    setToken(storedToken);
+    setUserId(storedUserId);
+  }, []);
 
   useEffect(() => {
     async function getUserInfo() {
-      try {
-        const response = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setName(response.data.item.name);
-        setPhone(response.data.item.phone);
-        setAddress(response.data.item.address);
-        setBio(response.data.item.bio);
-      } catch (error) {
-        console.error('Error fetching user info', error);
+      if (userId && token) {
+        try {
+          const response = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setName(response.data.item.name);
+          setPhone(response.data.item.phone);
+          setAddress(response.data.item.address);
+          setBio(response.data.item.bio);
+        } catch (error) {
+          console.error('Error fetching user info', error);
+        }
       }
     }
 
@@ -84,13 +86,15 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
 
   async function handleAlertOpen() {
     try {
-      await axios.put(
-        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`,
-        { name, phone, address, bio },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      setShowAlert(true);
-      setErrorMessage(alertMessage);
+      if (userId && token) {
+        await axios.put(
+          `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`,
+          { name, phone, address, bio },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        setShowAlert(true);
+        setErrorMessage(alertMessage);
+      }
     } catch (error: any) {
       setErrorMessage(error.response?.data?.error || '전화번호가 올바르지 않습니다.');
       setShowAlert(true);
