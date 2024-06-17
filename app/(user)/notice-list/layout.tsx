@@ -1,4 +1,5 @@
-import { NavBar } from "@/components/NavBar";
+import Footer from '@/components/Footer';
+import { NavBar } from '@/components/NavBar';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ export default function layout({ children }: LayoutProps) {
       <main>
         <NavBar />
         {children}
+        {/* <Footer /> */}
       </main>
     </div>
   );
