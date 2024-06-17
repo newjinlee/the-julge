@@ -42,6 +42,7 @@ const RecentJobs = () => {
         saveRecentJob(jobDetails);
         setRecentJobs(getRecentJobs());
       } catch (error) {
+          return null;
       }
     };
 
