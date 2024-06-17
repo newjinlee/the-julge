@@ -1,5 +1,5 @@
 'use client';
-import { useState useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
 import axios from 'axios';
