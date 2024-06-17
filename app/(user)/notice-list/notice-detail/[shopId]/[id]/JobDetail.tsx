@@ -179,7 +179,7 @@ const JobDetail = () => {
           <div className="flex flex-col bg-white p-6 rounded-xl shadow-md lg:flex-row gap-8">
             <div className="flex-none w-full lg:w-1/2 rounded-xl overflow-hidden relative">
               <Image
-                className={`w-full h-full object-cover ${isPastJob || job.closed ? 'opacity-50' : ''}`}
+                className={`w-full h-full object-cover ${isPastJob || job.closed ? 'brightness-50' : ''}`}
                 src={shop.imageUrl}
                 alt={shop.name}
                 width={597}

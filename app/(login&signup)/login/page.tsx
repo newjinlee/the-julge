@@ -91,7 +91,7 @@ export default function Page() {
       <div className="flex justify-center">
         <h1> 회원이 아니신가요? </h1>
         <Link className="ml-3 text-blue-500 hover:underline" href="/signup">
-          회원가입가기
+          회원가입하기
         </Link>
       </div>
       {showModal && (
