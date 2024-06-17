@@ -36,7 +36,7 @@ const JobDetail = () => {
           checkIfUserApplied(storedShopId, storedNoticeId);
         }
       });
-      //.catch(error => console.error(error));
+      // .catch(error => console.error(error));
     }
   }, []);
 
