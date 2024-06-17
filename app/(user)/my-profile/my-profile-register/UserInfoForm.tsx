@@ -1,4 +1,5 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
@@ -44,11 +45,6 @@ const addresses = [
 ];
 
 export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-  }, []);
-
   const router = useRouter();
 
   const [file, setFile] = useState<File | null>(null);
@@ -58,26 +54,49 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
   const [address, setAddress] = useState('');
   const [bio, setBio] = useState('');
 
-  const handleFileChange = (file: File) => {
-    setFile(file);
-  };
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+    setToken(storedToken);
+    setUserId(storedUserId);
+  }, []);
+
+  useEffect(() => {
+    async function getUserInfo() {
+      if (userId && token) {
+        try {
+          const response = await axios.get(`https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setName(response.data.item.name);
+          setPhone(response.data.item.phone);
+          setAddress(response.data.item.address);
+          setBio(response.data.item.bio);
+        } catch (error) {
+          console.error('Error fetching user info', error);
+        }
+      }
+    }
+
+    getUserInfo();
+  }, [userId, token]);
 
   async function handleAlertOpen() {
-    const response = await axios.put(
-      `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`,
-      {
-        name,
-        phone,
-        address,
-        bio,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    setShowAlert(true);
+    try {
+      if (userId && token) {
+        await axios.put(
+          `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}`,
+          { name, phone, address, bio },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        setShowAlert(true);
+      }
+    } catch (error: any) {
+      console.error('Error updating user info', error);
+    }
   }
 
   function handleAlertClose() {
@@ -97,8 +116,8 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
         </div>
         <div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <UserInput label="이름*" placeholder="입력" value={name} onChange={e => setName(e.target.value)} />{' '}
-            <UserInput label="전화번호*" placeholder="입력" value={phone} onChange={e => setPhone(e.target.value)} />{' '}
+            <UserInput label="이름*" placeholder="입력" value={name} onChange={e => setName(e.target.value)} />
+            <UserInput label="전화번호*" placeholder="입력" value={phone} onChange={e => setPhone(e.target.value)} />
             <UserDropdown label="주소*" options={addresses} selectedOption={address} onOptionSelected={setAddress} />
           </div>
 
@@ -109,6 +128,7 @@ export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoForm
               <textarea
                 className="px-5 py-4 w-full h-[153px] border border-solid border-gray-300 rounded-md"
                 placeholder="입력"
+                value={bio}
                 onChange={handleTextArea}></textarea>
             </div>
           </div>
