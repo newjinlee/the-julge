@@ -95,11 +95,16 @@ export default function Page() {
         </Link>
       </div>
       {showModal && (
-        <div className="absolute top-50 left-50 w-[200px] h-[80px] flex justify-center items-center bg-black bg-opacity-50">
-          <div className="bg-white p-5 rounded-lg">
-            <h2>알림</h2>
-            <p>이메일/비밀번호가 올바르지 않습니다.</p>
-            <button onClick={() => setShowModal(false)}>닫기</button>
+        <div className="absolute w-full h-full top-50 left-50  flex justify-center items-center bg-black bg-opacity-50">
+          <div className=" flex flex-col justify-center items-center bg-white rounded-lg w-[327px] h-[220px] lg:w-[540px] lg:h-[250px] ">
+            <p className="text-[18px] ">비밀번호가 일치하지 않습니다. </p>
+            <div className="pb-[50px]"> </div>
+
+            <button
+              className=" w-[120px] h-[48px]  bg-[#EA3C12] rounded-md text-white"
+              onClick={() => setShowModal(false)}>
+              닫기
+            </button>
           </div>
         </div>
       )}
