@@ -1,5 +1,5 @@
-import axiosInstance from '../lib/axiosInstance';
 import { NextResponse } from 'next/server';
+import axiosInstance from '../lib/axiosInstance';
 
 interface ShopData {
   name: string;

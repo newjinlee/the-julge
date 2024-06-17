@@ -1,6 +1,6 @@
-import axiosInstance from '../../lib/axiosInstance';
 import { NextResponse } from 'next/server';
 import { ShopData } from '@/types';
+import axiosInstance from '../../lib/axiosInstance';
 
 export async function PUT(request: Request, context: { params: { shopId: string } }): Promise<NextResponse> {
   let shopData: ShopData;
