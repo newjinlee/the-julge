@@ -1,3 +1,4 @@
+'use client';
 import UserInfoForm from './UserInfoForm';
 
 const ProfilePage = () => {
