@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState useEffect } from 'react';
 import Image from 'next/image';
 import closeIcon from '@/public/close-icon.png';
 import axios from 'axios';
@@ -44,8 +44,11 @@ const addresses = [
 ];
 
 export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+  }, []);
+
   const router = useRouter();
 
   const [file, setFile] = useState<File | null>(null);

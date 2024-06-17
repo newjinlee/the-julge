@@ -44,8 +44,11 @@ const addresses = [
 ];
 
 export default function UserInfoForm({ buttonText, alertMessage }: StoreInfoFormProps) {
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+  }, []);
+
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState('');

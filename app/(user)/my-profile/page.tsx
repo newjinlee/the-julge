@@ -14,8 +14,10 @@ export default function Page() {
   const [applyData, setApplyData] = useState({});
   const [applyNum, setApplyNum] = useState(0);
 
-  const userId = localStorage.getItem('userId');
-  const token = localStorage.getItem('token');
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+  }, []);
 
   useEffect(() => {
     async function getUserData() {
