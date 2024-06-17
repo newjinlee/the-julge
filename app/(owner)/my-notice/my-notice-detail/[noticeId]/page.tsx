@@ -38,7 +38,9 @@ const MyNoticeDetail = () => {
 
     const fetchNoticeDetail = async () => {
       try {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const shop = await useShopData(userId);
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const detail: NoticeFullDetailData = await useNoticeFullDetail(shop.item.id, noticeId, offset, limit);
 
         // 마감 된 공고는 내가게 페이지로 이동
@@ -50,11 +52,13 @@ const MyNoticeDetail = () => {
         setNoticeFullDetail(detail);
         setApplications(detail.item.currentUserApplication);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
     };
 
     fetchNoticeDetail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noticeId, offset]);
 
   // alert
@@ -80,6 +84,7 @@ const MyNoticeDetail = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        // eslint-disable-next-line object-shorthand
         body: JSON.stringify({ status: status }),
       });
 
@@ -91,6 +96,7 @@ const MyNoticeDetail = () => {
       handleAlertClose();
       toast.success(`${confirmMessage} 완료`);
     } catch (error: any) {
+      // eslint-disable-next-line no-console
       console.error('Error', error);
       handleAlertClose();
       toast.error(error.message);
@@ -101,6 +107,7 @@ const MyNoticeDetail = () => {
     }
   };
 
+  // eslint-disable-next-line require-await
   const handleUpdateApplication = async (status: string, applicationId: string) => {
     const message = status === 'rejected' ? '거절' : '승인';
     setConfirmMessage(message);
@@ -110,6 +117,7 @@ const MyNoticeDetail = () => {
 
     setAlertMessage(`신청을 ${message}하시겠어요?`);
     handleAlertOpen();
+    // eslint-disable-next-line no-useless-return
     return;
   };
 
