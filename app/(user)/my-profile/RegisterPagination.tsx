@@ -32,14 +32,24 @@ export default function RegisterPagination() {
   const [userData, setUserData] = useState<Application[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const itemsPerPage = 5;
 
   useEffect(() => {
-    getApplyData();
-  }, [currentPage]);
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
+      const storedUserId = localStorage.getItem('userId');
+      setToken(storedToken);
+      setUserId(storedUserId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token && userId) {
+      getApplyData();
+    }
+  }, [currentPage, token, userId]);
 
   async function getApplyData() {
     try {
@@ -58,8 +68,9 @@ export default function RegisterPagination() {
       );
       setUserData(response.data.items);
       setTotalPages(Math.ceil(response.data.count / itemsPerPage));
-      // 로컬 스토리지에 applynum 값 저장
-      localStorage.setItem('applynum', response.data.count);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('applynum', response.data.count);
+      }
     } catch (error) {
       console.error('Error fetching data', error);
     }

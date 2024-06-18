@@ -1,23 +1,41 @@
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 export default function ProfileRegister() {
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedToken = localStorage.getItem('token');
+      const storedUserId = localStorage.getItem('userId');
+      setToken(storedToken);
+      setUserId(storedUserId);
+    }
+  }, []);
 
   useEffect(() => {
     async function getApplyData() {
-      const response = await axios.get(
-        `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      if (userId && token) {
+        try {
+          const response = await axios.get(
+            `https://bootcamp-api.codeit.kr/api/5-7/the-julge/users/${userId}/applications`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          // Handle the response data as needed
+        } catch (error) {
+          console.error('Error fetching application data:', error);
+        }
+      }
     }
-  });
+
+    getApplyData();
+  }, [userId, token]);
 
   return (
     <>
